@@ -42,7 +42,8 @@ class FormidableRSSParser {
 	public function __construct() {
 		$this->load_plugin_textdomain();
 		include_once 'vendor/autoload.php';
-
+		include_once 'classes/wp-formidable-rss-parser-admin.php';
+		new FormidableRSSParserAdmin();
 	}
 
 	/**

@@ -11,7 +11,7 @@ class FormidableRSSParserAdmin {
 	}
 
 	public function create_setting_page() {
-		add_options_page( __( 'Formidable RSS Parser', 'formidable-rss-parser' ), __( 'Formidable RSS Parser', 'formidable-rss-parser' ), 'manage_options', WpHtmlCssToImage::get_slug(), array( $this, 'formidable_rss_parser_page' ) );
+		add_options_page( __( 'Formidable RSS Parser', 'formidable-rss-parser' ), __( 'Formidable RSS Parser', 'formidable-rss-parser' ), 'manage_options', FormidableRSSParser::get_slug(), array( $this, 'formidable_rss_parser_page' ) );
 	}
 
 	public function formidable_rss_parser_page() {
@@ -26,8 +26,8 @@ class FormidableRSSParserAdmin {
 
 			<form method="post" action="options.php">
 				<?php wp_nonce_field( 'update-options' ); ?>
-				<?php settings_fields( 'wp_htmlcsstoimage_option' ); ?>
-				<?php do_settings_sections( 'wp_htmlcsstoimage_option' ); ?>
+				<?php settings_fields( 'wp_formidable_rss_parser_option' ); ?>
+				<?php do_settings_sections( 'wp_formidable_rss_parser_option' ); ?>
 				<?php submit_button(); ?>
 			</form>
 
@@ -36,40 +36,40 @@ class FormidableRSSParserAdmin {
 	}
 
 	public function settings_init() {
-		add_settings_section( 'wp_htmlcsstoimage_section', '', '', 'wp_htmlcsstoimage_option' );
+		add_settings_section( 'wp_formidable_rss_parser_section', '', '', 'wp_formidable_rss_parser_option' );
 
-		add_settings_field( 'wp_htmlcsstoimage_user_id', __( 'User Id', 'formidable-rss-parser' ), array( $this, 'wp_htmlcsstoimage_user_id_cb' ), 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_section' );
-		add_settings_field( 'wp_htmlcsstoimage_api_key', __( 'API key', 'formidable-rss-parser' ), array( $this, 'wp_htmlcsstoimage_api_key_cb' ), 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_section' );
-		add_settings_field( 'wp_htmlcsstoimage_header', __( 'Header', 'formidable-rss-parser' ), array( $this, 'wp_htmlcsstoimage_header_cb' ), 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_section' );
+		add_settings_field( 'wp_formidable_rss_parser_user_id', __( 'User Id', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_user_id_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
+		add_settings_field( 'wp_formidable_rss_parser_api_key', __( 'API key', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_api_key_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
+		add_settings_field( 'wp_formidable_rss_parser_header', __( 'Header', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_header_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
 
-		register_setting( 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_user_id' );
-		register_setting( 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_api_key' );
-		register_setting( 'wp_htmlcsstoimage_option', 'wp_htmlcsstoimage_header' );
+		register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_user_id' );
+		register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_api_key' );
+		register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_header' );
 	}
 
-	public function wp_htmlcsstoimage_user_id_cb() {
-		$value = get_option( 'wp_htmlcsstoimage_user_id' );
+	public function wp_formidable_rss_parser_user_id_cb() {
+		$value = get_option( 'wp_formidable_rss_parser_user_id' );
 		?>
 		<p>
-			<input type="password" name="wp_htmlcsstoimage_user_id" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
+			<input type="password" name="wp_formidable_rss_parser_user_id" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
 		</p>
 		<?php
 	}
 
-	public function wp_htmlcsstoimage_api_key_cb() {
-		$value = get_option( 'wp_htmlcsstoimage_api_key' );
+	public function wp_formidable_rss_parser_api_key_cb() {
+		$value = get_option( 'wp_formidable_rss_parser_api_key' );
 		?>
 		<p>
-			<input type="password" name="wp_htmlcsstoimage_api_key" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
+			<input type="password" name="wp_formidable_rss_parser_api_key" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
 		</p>
 		<?php
 	}
 
-	public function wp_htmlcsstoimage_header_cb() {
-		$value = get_option( 'wp_htmlcsstoimage_header' );
+	public function wp_formidable_rss_parser_header_cb() {
+		$value = get_option( 'wp_formidable_rss_parser_header' );
 		?>
 		<p>
-			<textarea style="width: 550px;" rows="20" name="wp_htmlcsstoimage_header"><?php echo esc_textarea( $value ) ?></textarea>
+			<textarea style="width: 550px;" rows="20" name="wp_formidable_rss_parser_header"><?php echo esc_textarea( $value ) ?></textarea>
 		</p>
 		<?php
 	}
