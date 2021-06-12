@@ -1,0 +1,16 @@
+{
+    "name": "scalater/wp-formidable-rss-parser",
+    "description": "WP plugin to Parse RSS feed into Formidable Fields",
+    "type": "wp-plugin",
+    "license": "GPLv2 or later",
+    "authors": [
+        {
+            "name": "Guillermo Figueroa Mesa (gfirem)",
+            "email": "gfirem@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "dg/rss-php": "dev-master"
+    }
+}
