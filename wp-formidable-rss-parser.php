@@ -38,12 +38,19 @@ class FormidableRSSParser {
 	public static $version = '1.0.0';
 	public static $slug = 'formidable-rss-parser';
 	private static $instance;
+	private static $view;
 
 	public function __construct() {
 		$this->load_plugin_textdomain();
+		self::$view    = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
 		include_once 'vendor/autoload.php';
 		include_once 'classes/wp-formidable-rss-parser-admin.php';
 		new FormidableRSSParserAdmin();
+		include_once 'classes/wp-formidable-rss-parser-field-base.php';
+		include_once 'classes/wp-formidable-rss-parser-field.php';
+		new FormidableRSSParserField();
+		include_once 'classes/wp-formidable-rss-parser-options.php';
+		new FormidableRSSParserFieldOptions();
 	}
 
 	/**
@@ -102,6 +109,13 @@ class FormidableRSSParser {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		return $url . $name . $suffix . '.' . $extension;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function get_view(): string {
+		return self::$view;
 	}
 }
 
