@@ -42,8 +42,9 @@ class FormidableRSSParser {
 
 	public function __construct() {
 		$this->load_plugin_textdomain();
-		self::$view    = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
+		self::$view = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
 		include_once 'vendor/autoload.php';
+		include_once 'classes/wp-formidable-rss-feed.php';
 		include_once 'classes/wp-formidable-rss-parser-admin.php';
 		new FormidableRSSParserAdmin();
 		include_once 'classes/wp-formidable-rss-parser-field-base.php';
@@ -51,6 +52,8 @@ class FormidableRSSParser {
 		new FormidableRSSParserField();
 		include_once 'classes/wp-formidable-rss-parser-options.php';
 		new FormidableRSSParserFieldOptions();
+		include 'classes/wp-formidable-rss-shortcode.php';
+		new FormidableRSSShortCode();
 	}
 
 	/**
@@ -87,6 +90,24 @@ class FormidableRSSParser {
 	 */
 	public function load_plugin_textdomain() {
 		load_plugin_textdomain( 'formidable-rss-parser', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
+	/**
+	 * Generate a random string with the length given
+	 * @param int $length
+	 *
+	 * @return string
+	 */
+	public static function random_string( $length = 10 ): string {
+		$characters       = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen( $characters );
+		$randomString     = '';
+
+		for ( $i = 0; $i < $length; $i ++ ) {
+			$randomString .= $characters[ rand( 0, $charactersLength - 1 ) ];
+		}
+
+		return $randomString;
 	}
 
 	/**

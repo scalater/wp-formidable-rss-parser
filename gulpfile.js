@@ -16,6 +16,8 @@
  * Configuration.
  */
 const styleDir = './assets/css/*.css';
+const sassDir = './assets/sass/**/*.scss';
+const sassTargetDir = './assets/css';
 const styleDestination = './assets/css/';
 const jsDir = './assets/js/*.js';
 const jsDestination = './assets/js/';
@@ -23,9 +25,14 @@ const jsDestination = './assets/js/';
  * Load modules
  */
 const gulp = require('gulp');
+const sass = require('gulp-sass');
+sass.compiler = require('node-sass');
+var autoprefixer = require('gulp-autoprefixer')
+var minCss = require('gulp-minify-css')
+var rename = require('gulp-rename')
+
 const minifycss = require('gulp-uglifycss');
 var uglify = require('gulp-uglify-es').default;
-const rename = require('gulp-rename');
 const notify = require('gulp-notify');
 const clean = require('gulp-clean');
 const stripDebug = require('gulp-strip-debug');
@@ -46,6 +53,23 @@ gulp.task('clean-min-styles', function() {
 gulp.task('clean-min-js', function() {
     return gulp.src(jsDestination + '*.min.js', {read: false})
         .pipe(clean({force: true}));
+});
+
+gulp.task('sass', function () {
+	return gulp.src(sassDir)
+	// output non-minified CSS file
+	.pipe(sass({outputStyle : 'expanded'}).on('error', sass.logError))
+	.pipe(autoprefixer())
+	.pipe(gulp.dest(sassTargetDir))
+	// output the minified version
+	.pipe(minifycss())
+	.pipe(rename({ extname: '.min.css' }))
+	.pipe(gulp.dest(sassTargetDir))
+	.pipe(notify({message: 'TASK: "SASS" Completed!', onLast: true}));
+});
+
+gulp.task('sass:watch', function () {
+	gulp.watch(sassDir, ['sass']);
 });
 
 gulp.task('styles', ['clean-min-styles'], function() {

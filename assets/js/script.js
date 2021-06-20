@@ -161,8 +161,7 @@ var formidableRSSParserInstance = {
 
 		return this;
 	},
-	init: function() {
-		jQuery.fn.onRssKeyOut = formidableRSSParserInstance.onRssKeyOut;
+	initFormidableField: function() {
 		let containers = jQuery('.formidable-rss-parser-container');
 		if (containers && containers.length > 0) {
 			jQuery.each(containers, function(i, e) {
@@ -196,6 +195,34 @@ var formidableRSSParserInstance = {
 				}
 			});
 		}
+	},
+	clearShortCodeInput: function(element) {
+		if (!element) {
+			return;
+		}
+		jQuery(element).val('');
+	},
+	initShortCode: function() {
+		let containers = jQuery('.formidable-rss-parser-container-shortcode');
+		if (containers && containers.length > 0) {
+			jQuery.each(containers, function(i, e) {
+				let container = jQuery(e);
+				let targetElement = container.find('.formidable-rss-parser');
+				if (targetElement && targetElement.length > 0) {
+					let targetFormIdShow = targetElement.attr('data-form-id-show');
+					let targetFormIdEpisode = targetElement.attr('data-form-id-episode');
+					let targetType = targetElement.attr('data-type');
+					container.find('.clear').on('click', function() {
+						formidableRSSParserInstance.clearShortCodeInput(targetElement);
+					});
+				}
+			});
+		}
+	},
+	init: function() {
+		jQuery.fn.onRssKeyOut = formidableRSSParserInstance.onRssKeyOut;
+		formidableRSSParserInstance.initFormidableField();
+		formidableRSSParserInstance.initShortCode();
 	},
 };
 

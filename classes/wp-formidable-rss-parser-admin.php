@@ -75,5 +75,16 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 			</p>
 			<?php
 		}
+
+		public static function include_assets() {
+			wp_enqueue_script( 'formidableRSSParserLodash', FormidableRSSParser::assets_path( 'lodash.min' ), array( 'jquery' ), FormidableRSSParser::get_version(), true );
+			wp_enqueue_script( 'formidableRSSParser', FormidableRSSParser::assets_path( 'script' ), array( 'jquery', 'formidableRSSParserLodash' ), FormidableRSSParser::get_version(), true );
+			wp_enqueue_style( 'formidableRSSParser', FormidableRSSParser::assets_path( 'style', 'css' ), array(), FormidableRSSParser::get_version());
+			$args = array(
+					'admin_url' => admin_url( 'admin-ajax.php' ),
+					'nonce'     => wp_create_nonce( FormidableRSSParser::get_slug() . __DIR__ ),
+			);
+			wp_localize_script( 'formidableRSSParser', 'formidableRSSParserObj', $args );
+		}
 	}
 }
