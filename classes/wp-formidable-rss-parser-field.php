@@ -111,13 +111,5 @@ if ( ! class_exists( 'FormidableRSSParserField' ) ) {
 
 			return $errors;
 		}
-
-		/**
-		 * Me quede en implementar la llamada de jquery para hacer la peticion desde el servidor de la informacion del RSS,
-		 * cuando le pase la url al servidor entonces con php consumir el servivio y despues retornar esa respuesta al frontend en la respuesta del ajax
-		 * con la respuesta de ajax entonces hay que iterar sobre todos los campos y leer el atributo donde definen que valor debe ponerse
-		 * Hay que implementar las opciones nuevas de los campos donde establecer que campos se van a parsear
-		 * Los detalles menores como validaciones mas fuertes y mejoras de codigo pueden quedar para despues.
-		 */
 	}
 }

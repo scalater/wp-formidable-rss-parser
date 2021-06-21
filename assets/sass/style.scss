@@ -1,5 +1,5 @@
 .formidable-rss-parser-container-shortcode {
-  width: 20%;
+  width: 30%;
 
   label p {
 	margin-bottom: 0.5em;
@@ -55,5 +55,143 @@
   button {
 	height: 33px;
 	margin-top: 0.5em;
+	width: 100%;
+  }
+
+  .formidable-rss-result-show, .formidable-rss-result-episodes-container {
+	display: none;
+  }
+
+  .formidable-rss-result-show, .formidable-rss-result-episodes {
+	height: 200px;
+	border: 1px #e7e7e7 solid;
+	border-radius: 3px;
+
+	ul {
+	  list-style: none;
+	  margin: 10px 0;
+
+	  li {
+		cursor: pointer;
+		list-style: none;
+		display: flex;
+	  }
+	}
+  }
+
+  .formidable-rss-result-show {
+	scroll-behavior: smooth;
+	overflow-x: scroll;
+	margin: 20px 0;
+
+	ul li {
+	  flex-direction: row;
+	  flex-wrap: nowrap;
+	  align-content: center;
+	  justify-content: flex-start;
+	  align-items: center;
+	  margin-bottom: 10px;
+
+	  .element-image {
+		flex-grow: 1;
+		width: 35px;
+		height: auto;
+	  }
+
+	  .element-details {
+		flex-grow: 10;
+		margin-left: 10px;
+
+		.element-title {
+		  font-size: 1.3em;
+		  font-weight: bold;
+		}
+
+		.element-sub-details {
+		  font-size: 1em;
+		  font-weight: 400;
+
+		  .element-separator {
+			font-weight: 900;
+		  }
+		}
+	  }
+	}
+  }
+
+  .formidable-rss-result-episodes-container {
+	margin: 20px 0;
+
+	.formidable-rss-result-episodes {
+	  display: flex;
+	  flex-direction: row;
+	  flex-wrap: nowrap;
+	  align-content: center;
+	  justify-content: flex-start;
+	  align-items: center;
+	  height: 200px;
+
+	  .element-image {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-content: center;
+		justify-content: center;
+		align-items: center;
+		flex-grow: 1;
+		background: #f1f1f1;
+		width: 25%;
+
+		img {
+		  height: 200px;
+		  width: 100%;
+		  object-fit: cover;
+		}
+	  }
+
+	  .episodes-list {
+		width: 70%;
+		scroll-behavior: smooth;
+		overflow-x: scroll;
+		flex-grow: 4;
+		height: 200px;
+		margin-left: 5px;
+
+		ul > li > label {
+		  width: 100%;
+		  cursor: pointer;
+
+		  input[type="checkbox"] {
+			width: 5%;
+			cursor: pointer;
+		  }
+		}
+
+		ul > li > label, .element-details {
+		  display: flex;
+		  flex-direction: row;
+		  flex-wrap: nowrap;
+		  align-content: center;
+		  justify-content: flex-start;
+		  align-items: center;
+		}
+
+		.element-details {
+		  width: 95%;
+
+		  .element-title {
+			width: 70%;
+		  }
+
+		  .element-date {
+			width: 25%;
+		  }
+
+		  .element-duration {
+			width: 15%;
+		  }
+		}
+	  }
+	}
   }
 }

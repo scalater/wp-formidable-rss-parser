@@ -1,5 +1,5 @@
 .formidable-rss-parser-container-shortcode {
-  width: 20%;
+  width: 30%;
 }
 
 .formidable-rss-parser-container-shortcode label p {
@@ -56,4 +56,143 @@
 .formidable-rss-parser-container-shortcode button {
   height: 33px;
   margin-top: 0.5em;
+  width: 100%;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show, .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container {
+  display: none;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show, .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes {
+  height: 200px;
+  border: 1px #e7e7e7 solid;
+  border-radius: 3px;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul, .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes ul {
+  list-style: none;
+  margin: 10px 0;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li, .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes ul li {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show {
+  scroll-behavior: smooth;
+  overflow-x: scroll;
+  margin: 20px 0;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li .element-image {
+  flex-grow: 1;
+  width: 35px;
+  height: auto;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li .element-details {
+  flex-grow: 10;
+  margin-left: 10px;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li .element-details .element-title {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li .element-details .element-sub-details {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show ul li .element-details .element-sub-details .element-separator {
+  font-weight: 900;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container {
+  margin: 20px 0;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  height: 200px;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .element-image {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background: #f1f1f1;
+  width: 25%;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .element-image img {
+  height: 200px;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list {
+  width: 70%;
+  scroll-behavior: smooth;
+  overflow-x: scroll;
+  flex-grow: 4;
+  height: 200px;
+  margin-left: 5px;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list ul > li > label {
+  width: 100%;
+  cursor: pointer;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list ul > li > label input[type="checkbox"] {
+  width: 5%;
+  cursor: pointer;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list ul > li > label, .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list .element-details {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list .element-details {
+  width: 95%;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list .element-details .element-title {
+  width: 70%;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list .element-details .element-date {
+  width: 25%;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list .element-details .element-duration {
+  width: 15%;
 }
