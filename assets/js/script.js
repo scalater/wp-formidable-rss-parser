@@ -240,7 +240,7 @@ var formidableRSSParserInstance = {
 		}, 500);
 	},
 	onShortCodeImport: function(e, container) {
-		let selectedEpisodes = container.find('.formidable-rss-result-episodes li label input[type="checkbox"]:checked');
+		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		console.log('onShortCodeImport', selectedEpisodes);
 	},
 	initShortCode: function() {
@@ -253,7 +253,7 @@ var formidableRSSParserInstance = {
 					let targetFormIdShow = targetElement.attr('data-form-id-show');
 					let targetFormIdEpisode = targetElement.attr('data-form-id-episode');
 					let targetType = targetElement.attr('data-type');
-					container.find('.formidable-rss-result-show ul>li').on('click', function(e) {
+					container.find('.formidable-rss-result-show label.element-list').on('click', function(e) {
 						formidableRSSParserInstance.onShortCodeShowClick(e, container);
 					});
 					container.find('.search-container button.search-show').on('click', function(e) {
@@ -262,7 +262,7 @@ var formidableRSSParserInstance = {
 					container.find('.formidable-rss-result-episodes-container button.import-episodes').on('click', function(e) {
 						formidableRSSParserInstance.onShortCodeImport(e, container);
 					});
-					container.find('.clear').on('click', function() {
+					container.find('.clear-input').on('click', function() {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);
 					});
 				}

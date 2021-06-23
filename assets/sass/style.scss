@@ -1,197 +1,307 @@
+$color-primary: #0274be;
+$color-primary-dark: #524d4d;
+$color-primary-light: #e7e7e7;
+$gap: 12px;
+$input-height: $gap * 3.5;
+$radius: $gap * 0.6;
+
+.entry-content.clear {
+	padding: 0 20px;
+}
+
 .formidable-rss-parser-container-shortcode {
-  width: 30%;
-
-  label p {
-	margin-bottom: 0.5em;
-  }
-
-  .input-outer {
-	height: 33px;
-	border: 1px #e7e7e7 solid;
-	border-radius: 3px;
-  }
-
-  .input-outer input {
-	width: 90%;
-	border: 0;
-	outline: none;
-	margin: 0 0 0 10px;
-	border-radius: 20px;
-	color: #666;
-	height: 30px;
-	background-color: #fff;
-	line-height: 1.3;
-  }
-
-  .clear {
-	position: relative;
-	float: right;
-	height: 20px;
-	width: 20px;
-	top: 5px;
-	right: 5px;
-	border-radius: 20px;
-	background: #f1f1f1;
-	color: #524d4d;
-	font-weight: bold;
-	text-align: center;
-	cursor: pointer;
-	font-size: 12px;
-  }
-
-  .clear:hover {
-	background: #ccc;
-  }
-
-  .search-container {
-	display: flex;
-	align-content: stretch;
-	align-items: stretch;
-	justify-content: center;
-	flex-direction: column;
-	flex-wrap: wrap;
-  }
-
-  button {
-	height: 33px;
-	margin-top: 0.5em;
 	width: 100%;
-  }
+	max-width: 600px;
+	padding-bottom: $gap * 2;
 
-  .formidable-rss-result-show, .formidable-rss-result-episodes-container {
-	display: none;
-  }
-
-  .formidable-rss-result-show, .formidable-rss-result-episodes {
-	height: 200px;
-	border: 1px #e7e7e7 solid;
-	border-radius: 3px;
-
-	ul {
-	  list-style: none;
-	  margin: 10px 0;
-
-	  li {
-		cursor: pointer;
-		list-style: none;
-		display: flex;
-	  }
-	}
-  }
-
-  .formidable-rss-result-show {
-	scroll-behavior: smooth;
-	overflow-x: scroll;
-	margin: 20px 0;
-
-	ul li {
-	  flex-direction: row;
-	  flex-wrap: nowrap;
-	  align-content: center;
-	  justify-content: flex-start;
-	  align-items: center;
-	  margin-bottom: 10px;
-
-	  .element-image {
-		flex-grow: 1;
-		width: 35px;
-		height: auto;
-	  }
-
-	  .element-details {
-		flex-grow: 10;
-		margin-left: 10px;
-
-		.element-title {
-		  font-size: 1.3em;
-		  font-weight: bold;
+	label {
+		.title {
+			line-height: 140%;
+			margin-bottom: $gap;
 		}
 
-		.element-sub-details {
-		  font-size: 1em;
-		  font-weight: 400;
+		.search-container {
+			display: flex;
+			flex-wrap: nowrap;
+			flex-direction: column;
 
-		  .element-separator {
-			font-weight: 900;
-		  }
+			.input-outer {
+				display: flex;
+				padding: 0 $gap;
+				height: $input-height;
+				flex-wrap: nowrap;
+				flex-direction: row;
+				align-items: center;
+				border-radius: $radius;
+				border: 1px solid $color-primary-light;
+
+				&:focus-within {
+					border-color: $color-primary;
+				}
+
+				.formidable-rss-parser {
+					margin: 0;
+					border: 0;
+					padding: 0;
+					width: 100%;
+					height: 100%;
+					outline: none;
+					color: #666;
+					line-height: 100%;
+					background: white;
+				}
+
+				.clear-input {
+					$size: $input-height - $gap;
+
+					width: $size;
+					height: $size;
+					margin-left: $gap;
+					margin-right: -($gap / 2);
+					display: flex;
+					cursor: pointer;
+					position: relative;
+					border-radius: 100%;
+					background: rgba($color-primary-dark, 0.1);
+
+					svg {
+						padding: $gap / 2;
+
+						path {
+							fill: $color-primary-dark;
+						}
+					}
+
+					&:hover {
+						background: $color-primary-dark;
+
+						path {
+							fill: white;
+						}
+					}
+				}
+			}
+
+			button.search-show {
+				width: 100%;
+				height: $input-height;
+				margin-top: $gap;
+				border-radius: $radius;
+				background: $color-primary;
+
+				&:hover {
+					background: $color-primary-dark;
+				}
+			}
 		}
-	  }
 	}
-  }
 
-  .formidable-rss-result-episodes-container {
-	margin: 20px 0;
+	.formidable-rss-result-show,
+	.formidable-rss-result-episodes-container {
+		display: none;
+	}
 
+	.formidable-rss-result-show,
 	.formidable-rss-result-episodes {
-	  display: flex;
-	  flex-direction: row;
-	  flex-wrap: nowrap;
-	  align-content: center;
-	  justify-content: flex-start;
-	  align-items: center;
-	  height: 200px;
+		$size: $gap * 8;
 
-	  .element-image {
-		display: flex;
-		flex-direction: column;
-		flex-wrap: nowrap;
-		align-content: center;
-		justify-content: center;
-		align-items: center;
-		flex-grow: 1;
-		background: #f1f1f1;
-		width: 25%;
+		margin-top: $gap;
+		max-height: $size * 3;
+		border-radius: $radius;
+		box-sizing: content-box;
+		border: 1px solid $color-primary-light;
 
-		img {
-		  height: 200px;
-		  width: 100%;
-		  object-fit: cover;
-		}
-	  }
-
-	  .episodes-list {
-		width: 70%;
-		scroll-behavior: smooth;
-		overflow-x: scroll;
-		flex-grow: 4;
-		height: 200px;
-		margin-left: 5px;
-
-		ul > li > label {
-		  width: 100%;
-		  cursor: pointer;
-
-		  input[type="checkbox"] {
-			width: 5%;
-			cursor: pointer;
-		  }
+		&,
+		.episodes-list {
+			overflow: auto;
+			scroll-snap-type: y mandatory;
 		}
 
-		ul > li > label, .element-details {
-		  display: flex;
-		  flex-direction: row;
-		  flex-wrap: nowrap;
-		  align-content: center;
-		  justify-content: flex-start;
-		  align-items: center;
+		.element-list {
+			min-height: $size;
+			display: flex;
+			list-style: none;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			align-items: center;
+			box-sizing: content-box;
+			scroll-snap-align: start;
+			box-shadow: 0 1px 0 0 $color-primary-light;
+
+			&,
+			& * {
+				cursor: pointer;
+			}
+
+			.element-image {
+				width: $size;
+				height: 100%;
+				min-width: $size;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				img {
+					width: 100%;
+					height: 100%;
+					object-fit: contain;
+				}
+			}
+
+			.element-details {
+				height: 100%;
+				display: flex;
+				padding: ($gap / 2) $gap;
+				flex-direction: column;
+				justify-content: center;
+
+				.element-title,
+				.element-sub-details {
+					font-size: $gap * 1.25;
+					line-height: 140%;
+				}
+
+				.element-title {
+					font-weight: 500;
+				}
+
+				.element-sub-details {
+					display: flex;
+					flex-wrap: wrap;
+					flex-direction: row;
+					font-size: $gap * 1.1;
+
+					.element-separator {
+						margin: 0 ($gap / 2);
+					}
+
+					@media (max-width: 425px) {
+						flex-direction: column;
+
+						.element-separator {
+							display: none;
+						}
+					}
+				}
+			}
 		}
 
-		.element-details {
-		  width: 95%;
+		.episodes-list {
+			box-shadow: -1px 0 0 0 $color-primary-light;
 
-		  .element-title {
-			width: 70%;
-		  }
+			.element-list {
+				min-height: unset;
 
-		  .element-date {
-			width: 25%;
-		  }
+				.element-left {
+					display: flex;
+					padding-left: $gap;
+				}
 
-		  .element-duration {
-			width: 15%;
-		  }
+				[type="checkbox"] {
+					$size: $gap * 1.75;
+
+					width: $size;
+					height: $size;
+					display: block;
+					appearance: none;
+					background: none;
+					position: relative;
+					border-radius: $gap * 0.5;
+					box-shadow: inset 0 0 0 2px $color-primary-light;
+
+					&,
+					&::after {
+						transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+					}
+
+					&::after {
+						content: url("../images/check.svg");
+
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						opacity: 0;
+						width: 90%;
+						height: 90%;
+						margin: auto;
+						position: absolute;
+						transform: scale(0.5);
+					}
+
+					&:hover {
+						box-shadow: inset 0 0 0 2px rgba($color-primary-dark, 0.5);
+					}
+
+					&:checked {
+						box-shadow: inset 0 0 0 ($size / 2) $color-primary;
+
+						&::after {
+							opacity: 1;
+							transform: scale(1);
+							transition-delay: 0.15s;
+						}
+					}
+				}
+			}
 		}
-	  }
 	}
-  }
+
+	.formidable-rss-result-episodes-container {
+		.formidable-rss-result-episodes {
+			$size: $gap * 16;
+
+			display: flex;
+			overflow: hidden;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			max-height: $size;
+
+			.episode-image {
+				width: 100%;
+				max-width: $size;
+				scroll-snap-align: start;
+			}
+
+			.episodes-list {
+				width: 100%;
+
+				img {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+				}
+			}
+
+			@media (max-width: 425px) {
+				overflow: auto;
+				max-height: $size * 2;
+				flex-direction: column;
+
+				.episode-image {
+					width: 100%;
+					height: $size;
+					max-width: unset;
+					box-shadow: 0 1px 0 0 $color-primary-light;
+
+					img {
+						width: 100%;
+						height: 100%;
+						object-fit: contain;
+					}
+				}
+
+				.episodes-list {
+					display: contents;
+				}
+			}
+		}
+
+		.import-episodes {
+			width: 100%;
+			height: $input-height;
+			margin-top: $gap;
+			border-radius: $radius;
+		}
+	}
 }
