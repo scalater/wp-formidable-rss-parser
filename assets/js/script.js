@@ -1,4 +1,10 @@
-var formidableRSSParserInstance = {
+var formidableRSSParserData, formidableRSSParserInstance = {
+	setShowData: function(data) {
+		formidableRSSParserData = data;
+	},
+	getShowData: function() {
+		return formidableRSSParserData;
+	},
 	validateURL: function(url) {
 		return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(
 			url);
@@ -110,7 +116,32 @@ var formidableRSSParserInstance = {
 			});
 		}
 	},
-	rssAjax: function(url, targetFormElement) {
+	importAjax: function(data, selection, onSuccessCallback, onCompleteCallback){
+		jQuery.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: wpHtmlCssToImageObj.admin_url,
+			data: {
+				'action': 'formidable_rss_parser_import',
+				'nonce': formidableRSSParserObj.nonce,
+				'data': data,
+				'selection': selection,
+			},
+			success: function(response) {
+				console.log(response);
+				if (response && response.success && response.status) {
+					onSuccessCallback(response.status);
+				}
+			},
+			error: function(request, status, error) {
+				throw request.responseText;
+			},
+			complete: function() {
+				onCompleteCallback();
+			},
+		});
+	},
+	rssAjax: function(url, onSuccessCallback, onCompleteCallback) {
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
@@ -123,14 +154,14 @@ var formidableRSSParserInstance = {
 			success: function(response) {
 				console.log(response);
 				if (response && response.success && response.data) {
-					formidableRSSParserInstance.rssParser(response.data);
+					onSuccessCallback(response.data);
 				}
 			},
 			error: function(request, status, error) {
-				alert(request.responseText);
+				throw request.responseText;
 			},
 			complete: function() {
-				formidableRSSParserInstance.removeSubmitLoading(targetFormElement);
+				onCompleteCallback();
 			},
 		});
 	},
@@ -186,7 +217,17 @@ var formidableRSSParserInstance = {
 										jsErrors[targetElementContainerId] = 'Invalid RSS URL';
 										formidableRSSParserInstance.addFieldError(targetElementContainer, targetElementContainerId, jsErrors);
 									} else {
-										formidableRSSParserInstance.rssAjax(rssUrl, targetFormElement);
+										formidableRSSParserInstance.rssAjax(rssUrl,
+											function(data) {
+												if (data.shows) {
+													formidableRSSParserInstance.setShowData(data);
+													formidableRSSParserInstance.rssParser(data.shows);
+												}
+											},
+											function() {
+												formidableRSSParserInstance.removeSubmitLoading(targetFormElement);
+											},
+										);
 									}
 								}
 							});
@@ -209,39 +250,111 @@ var formidableRSSParserInstance = {
 			return;
 		}
 		let text = jQuery(button).text();
-		jQuery(button).attr('data-default-text', text).text('Loading...');
+		jQuery(button).attr('data-default-text', text).text('Loading...').attr('disabled', 'disabled');
 	},
 	shortCodeLoadingRemove: function(button) {
 		if (!button) {
 			return;
 		}
 		let text = jQuery(button).attr('data-default-text');
+		jQuery(button).removeAttr('disabled');
 		jQuery(button).text(text);
 	},
-	onShortCodeSearch: function(e, container) {
+	onShortCodeSearch: function(e, container, targetElement) {
 		console.log('onShortCodeSearch', container);
 		const searchButton = container.find('button.search-show');
-		formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
-		window.setTimeout(function() {
-			formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
-			container.find('.formidable-rss-result-show').show();
-			container.find('.formidable-rss-result-episodes-container').hide();
-		}, 500);
-
+		let rssUrl = jQuery(targetElement).val();
+		if (rssUrl) {
+			let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
+			if (!isValidUrl) {
+				//todo add error for the shortcode interface
+				console.log('Invalid URL');
+			} else {
+				formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+				formidableRSSParserInstance.rssAjax(rssUrl,
+					function(data) {
+						if (data.count && data.count > 0 && data.shows) {
+							formidableRSSParserInstance.setShowData(data);
+							let resultContainer = container.find('.formidable-rss-result-show');
+							//todo change the way the result list is build when data is an array of results
+							if (data.count === 1) {
+								let showHtml = '<label class="element-list">' +
+									'<div class="element-image">' +
+									'<img src="' + data.shows.image.url + '" alt="' + data.shows.image.title + '">' +
+									'</div>' +
+									'<div class="element-details">' +
+									'<div class="element-title">' + data.shows.title + '</div>' +
+									'<div class="element-sub-details">' +
+									'<span class="element-author">' + data.shows.title + '</span>' +
+									'<span class="element-separator">&centerdot;</span>' +
+									'<span class="element-episode-amount">' + data.shows.item.length + '</span>' +
+									'</div>' +
+									'</div>' +
+									'</label>';
+								resultContainer.html('').html(showHtml);
+							}
+						}
+					},
+					function() {
+						formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+						container.find('.formidable-rss-result-show').show();
+						container.find('.formidable-rss-result-episodes-container').hide();
+					},
+				);
+			}
+		} else {
+			//todo add error for the shortcode interface
+			console.log('Empty URL');
+		}
 	},
 	onShortCodeShowClick: function(e, container) {
 		console.log('onShortCodeShowClick', jQuery(e));
 		const searchButton = container.find('button.search-show');
-		formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
-		window.setTimeout(function() {
-			formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
-			container.find('.formidable-rss-result-show').hide();
-			container.find('.formidable-rss-result-episodes-container').show();
-		}, 500);
+		let data = formidableRSSParserInstance.getShowData();
+		if (data && data.shows && data.shows.item) {
+			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+			window.setTimeout(function() {
+				let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image');
+				let listContainer = container.find('.formidable-rss-result-episodes-container .episodes-list');
+				imageContainer.attr('src', data.shows.image.url);
+				listContainer.html('');
+				jQuery.each(data.shows.item, function(i, e) {
+					let fullDate = new Date(e['timestamp']);
+					var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+					let formatDate = months[fullDate.getMonth()] + ' ' + fullDate.getDate() + ', ' + fullDate.getFullYear(); //May 19, 2021
+					let listHtml = '<label class="element-list">' +
+						'<div class="element-left">' +
+						'<input type="checkbox" name="lorem" value="' + i + '">' +
+						'</div>' +
+						'<div class="element-details">' +
+						'<span class="element-title">' + e['title'] + '</span>' +
+						'<div class="element-sub-details">' +
+						'<span class="element-date">' + formatDate + '</span>' +
+						'<span class="element-separator">&centerdot;</span>' +
+						'<span class="element-duration">' + e['itunes:duration'] + '</span>' +
+						'</div>' +
+						'</div>' +
+						'</label>';
+					listContainer.append(listHtml);
+				});
+				formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+				container.find('.formidable-rss-result-show').hide();
+				container.find('.formidable-rss-result-episodes-container').show();
+			}, 500);
+		} else {
+			throw 'No data detected or episodes items';
+		}
 	},
 	onShortCodeImport: function(e, container) {
+		console.log('onShortCodeImport', jQuery(e));
+		const searchButton = container.find('button.search-show');
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		console.log('onShortCodeImport', selectedEpisodes);
+		let data = formidableRSSParserInstance.getShowData();
+		if (data && data.shows && data.shows.item) {
+			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+		}
+		importAjax
 	},
 	initShortCode: function() {
 		let containers = jQuery('.formidable-rss-parser-container-shortcode');
@@ -253,16 +366,16 @@ var formidableRSSParserInstance = {
 					let targetFormIdShow = targetElement.attr('data-form-id-show');
 					let targetFormIdEpisode = targetElement.attr('data-form-id-episode');
 					let targetType = targetElement.attr('data-type');
-					container.find('.formidable-rss-result-show label.element-list').on('click', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-show label.element-list', function(e) {
 						formidableRSSParserInstance.onShortCodeShowClick(e, container);
 					});
-					container.find('.search-container button.search-show').on('click', function(e) {
-						formidableRSSParserInstance.onShortCodeSearch(e, container);
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .search-container button.search-show', function(e) {
+						formidableRSSParserInstance.onShortCodeSearch(e, container, targetElement);
 					});
-					container.find('.formidable-rss-result-episodes-container button.import-episodes').on('click', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container button.import-episodes', function(e) {
 						formidableRSSParserInstance.onShortCodeImport(e, container);
 					});
-					container.find('.clear-input').on('click', function() {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function(e) {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);
 					});
 				}
@@ -276,6 +389,10 @@ var formidableRSSParserInstance = {
 	},
 };
 
-jQuery(document).ready(function() {
-	formidableRSSParserInstance.init();
-});
+try {
+	jQuery(document).ready(function() {
+		formidableRSSParserInstance.init();
+	});
+} catch (e) {
+	console.error('[formidableRSSParser] - ' + e);
+}

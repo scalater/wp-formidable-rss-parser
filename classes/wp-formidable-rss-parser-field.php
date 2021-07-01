@@ -14,32 +14,7 @@ if ( ! class_exists( 'FormidableRSSParserField' ) ) {
 				),
 				__( 'RSS field to parse information into Form fields.', 'formidable-rss-parser' ),
 			);
-			add_action( "wp_ajax_nopriv_formidable_rss_parser", array( $this, "formidable_rss_parser_callback" ) );
-			add_action( "wp_ajax_formidable_rss_parse", array( $this, "formidable_rss_parser_callback" ) );
-		}
 
-		public function formidable_rss_parser_callback() {
-			try {
-				if ( ! ( is_array( $_POST ) && defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-					die();
-				}
-				if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) || empty( $_POST['url'] ) ) {
-					die();
-				}
-				if ( ! wp_verify_nonce( $_POST['nonce'], FormidableRSSParser::get_slug() . __DIR__ ) ) {
-					die();
-				}
-
-				$url           = sanitize_text_field( $_POST['url'] );
-				$feed_response = FormidableRSSFeed::load( $url );
-				if ( ! empty( $feed_response ) ) {
-					wp_send_json_success( $feed_response->toArray() );
-				}
-			} catch ( Exception $ex ) {
-				FormidableRSSParser::error_log( $ex->getMessage() );
-				wp_send_json_error( array() );
-			}
-			die();
 		}
 
 		protected function inside_field_options( $field, $display, $values ) {

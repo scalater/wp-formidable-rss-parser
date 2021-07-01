@@ -10,6 +10,58 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'create_setting_page' ) );
 			add_action( 'admin_init', array( $this, 'settings_init' ) );
+			add_action( "wp_ajax_nopriv_formidable_rss_parser", array( $this, "formidable_rss_parser_callback" ) );
+			add_action( "wp_ajax_formidable_rss_parse", array( $this, "formidable_rss_parser_callback" ) );
+			add_action( "wp_ajax_nopriv_formidable_rss_parser_import", array( $this, "formidable_rss_parser_import_callback" ) );
+			add_action( "wp_ajax_formidable_rss_parser_import", array( $this, "formidable_rss_parser_import_callback" ) );
+		}
+
+		public function formidable_rss_parser_import_callback() {
+			try {
+				if ( ! ( is_array( $_POST ) && defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+					die();
+				}
+				if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) || empty( $_POST['data'] ) || empty( $_POST['selection'] ) ) {
+					die();
+				}
+				if ( ! wp_verify_nonce( $_POST['nonce'], FormidableRSSParser::get_slug() . __DIR__ ) ) {
+					die();
+				}
+
+				$selections = array_map( 'intval', $_POST['selection'] );
+				$data =  $_POST['data'];
+
+			} catch ( Exception $ex ) {
+				FormidableRSSParser::error_log( $ex->getMessage() );
+				wp_send_json_error( array() );
+			}
+			die();
+		}
+
+		public function formidable_rss_parser_callback() {
+			try {
+				if ( ! ( is_array( $_POST ) && defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+					die();
+				}
+				if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) || empty( $_POST['url'] ) ) {
+					die();
+				}
+				if ( ! wp_verify_nonce( $_POST['nonce'], FormidableRSSParser::get_slug() . __DIR__ ) ) {
+					die();
+				}
+
+				$url           = sanitize_text_field( $_POST['url'] );
+				$result        = array( 'count' => 1 );
+				$feed_response = FormidableRSSFeed::load( $url );
+				if ( ! empty( $feed_response ) ) {
+					$result['shows'] = $feed_response->toArray();
+					wp_send_json_success( $result );
+				}
+			} catch ( Exception $ex ) {
+				FormidableRSSParser::error_log( $ex->getMessage() );
+				wp_send_json_error( array() );
+			}
+			die();
 		}
 
 		public function create_setting_page() {
@@ -79,7 +131,7 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 		public static function include_assets() {
 			wp_enqueue_script( 'formidableRSSParserLodash', FormidableRSSParser::assets_path( 'lodash.min' ), array( 'jquery' ), FormidableRSSParser::get_version(), true );
 			wp_enqueue_script( 'formidableRSSParser', FormidableRSSParser::assets_path( 'script' ), array( 'jquery', 'formidableRSSParserLodash' ), FormidableRSSParser::get_version(), true );
-			wp_enqueue_style( 'formidableRSSParser', FormidableRSSParser::assets_path( 'style', 'css' ), array(), FormidableRSSParser::get_version());
+			wp_enqueue_style( 'formidableRSSParser', FormidableRSSParser::assets_path( 'style', 'css' ), array(), FormidableRSSParser::get_version() );
 			$args = array(
 					'admin_url' => admin_url( 'admin-ajax.php' ),
 					'nonce'     => wp_create_nonce( FormidableRSSParser::get_slug() . __DIR__ ),

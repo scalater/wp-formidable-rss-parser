@@ -12,23 +12,7 @@
 		</div>
 	</label>
 
-	<div class="formidable-rss-result-show">
-		<?php for ($i=1; $i <= 10; $i++) { ?>
-			<label class="element-list">
-				<div class="element-image">
-					<img src="https://ssl-static.libsyn.com/p/assets/c/f/f/7/cff791c11c1462d4/tnw-artwork-3000x3000.jpg" alt="Lorem Ipsum Dolor">
-				</div>
-				<div class="element-details">
-					<div class="element-title"><?php echo $i ?>. Lorem Ipsum Dolor</div>
-					<div class="element-sub-details">
-						<span class="element-author">Author: Name Last Name</span>
-						<span class="element-separator">&centerdot;</span>
-						<span class="element-episode-amount">10 episodes</span>
-					</div>
-				</div>
-			</label>
-		<?php } ?>
-	</div>
+	<div class="formidable-rss-result-show"></div>
 
 	<div class="formidable-rss-result-episodes-container">
 		<div class="formidable-rss-result-episodes">
