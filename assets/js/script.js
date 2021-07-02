@@ -116,7 +116,12 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			});
 		}
 	},
-	importAjax: function(data, selection, onSuccessCallback, onCompleteCallback){
+	importAjax: function(data, selection, onSuccessCallback, onCompleteCallback) {
+		let resultSelection = [];
+		jQuery.each(selection, function(i, e) {
+			resultSelection.push(jQuery(e).val());
+		});
+		let resultData = JSON.stringify(data);
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
@@ -124,8 +129,8 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			data: {
 				'action': 'formidable_rss_parser_import',
 				'nonce': formidableRSSParserObj.nonce,
-				'data': data,
-				'selection': selection,
+				'data': resultData,
+				'selection': resultSelection,
 			},
 			success: function(response) {
 				console.log(response);
@@ -152,9 +157,10 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				'url': url,
 			},
 			success: function(response) {
-				console.log(response);
 				if (response && response.success && response.data) {
-					onSuccessCallback(response.data);
+					// response.data.shows = JSON.parse(response.data.shows);
+					// onSuccessCallback(response.data);
+					console.log(response.data);
 				}
 			},
 			error: function(request, status, error) {
@@ -314,9 +320,10 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		if (data && data.shows && data.shows.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 			window.setTimeout(function() {
-				let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image');
+				let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image img');
 				let listContainer = container.find('.formidable-rss-result-episodes-container .episodes-list');
 				imageContainer.attr('src', data.shows.image.url);
+				imageContainer.attr('alt', data.shows.image.title);
 				listContainer.html('');
 				jQuery.each(data.shows.item, function(i, e) {
 					let fullDate = new Date(e['timestamp']);
@@ -346,15 +353,19 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		}
 	},
 	onShortCodeImport: function(e, container) {
-		console.log('onShortCodeImport', jQuery(e));
 		const searchButton = container.find('button.search-show');
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
-		console.log('onShortCodeImport', selectedEpisodes);
 		let data = formidableRSSParserInstance.getShowData();
 		if (data && data.shows && data.shows.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+			formidableRSSParserInstance.importAjax(data, selectedEpisodes,
+				function(status) {
+					console.log('onShortCodeImport', status);
+				},
+				function() {
+					formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+				});
 		}
-		importAjax
 	},
 	initShortCode: function() {
 		let containers = jQuery('.formidable-rss-parser-container-shortcode');

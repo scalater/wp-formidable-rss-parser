@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use FeedIo\Parser\XmlParser as Parser;
+
 if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 
 	class FormidableRSSParserAdmin {
@@ -29,13 +31,23 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 				}
 
 				$selections = array_map( 'intval', $_POST['selection'] );
-				$data =  $_POST['data'];
+				$data       = json_decode( $_POST['data'] );
+
 
 			} catch ( Exception $ex ) {
 				FormidableRSSParser::error_log( $ex->getMessage() );
 				wp_send_json_error( array() );
 			}
 			die();
+		}
+
+		public function get_xml_element( $el ) {
+			foreach ( $el->getNamespaces( true ) as $prefix => $ns ) {
+				$children = $el->children( $ns );
+				foreach ( $children as $tag => $content ) {
+					$el->{$prefix . ':' . $tag} = $content;
+				}
+			}
 		}
 
 		public function formidable_rss_parser_callback() {
@@ -50,11 +62,22 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 					die();
 				}
 
-				$url           = sanitize_text_field( $_POST['url'] );
-				$result        = array( 'count' => 1 );
-				$feed_response = FormidableRSSFeed::load( $url );
+				$url = sanitize_text_field( $_POST['url'] );
+
+				$xml = $this->get_xml_content( $url );
+				$channel = $xml->channel;
+				$itunes = $channel->children('http://www.itunes.com/dtds/podcast-1.0.dtd');
+				$category = $itunes->category;
+				$categories = array();
+				foreach ( $category->children() as $item ) {
+					$categories[] = $item->getName();
+				}
+				$this->get_xml_element( $channel );
+//$feed_response = FormidableRSSFeed::loadRss( $url );
+				$result = array( 'count' => 1 );
+
 				if ( ! empty( $feed_response ) ) {
-					$result['shows'] = $feed_response->toArray();
+//					$result['shows'] = $feed_response->toArray();
 					wp_send_json_success( $result );
 				}
 			} catch ( Exception $ex ) {
@@ -62,6 +85,58 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 				wp_send_json_error( array() );
 			}
 			die();
+		}
+
+		public function xml2obj( $xml, $force = false ) {
+
+			$obj = new StdClass();
+
+			$obj->name = $xml->getName();
+
+			$text       = trim( (string) $xml );
+			$attributes = array();
+			$children   = array();
+
+			foreach ( $xml->attributes() as $k => $v ) {
+				$attributes[ $k ] = (string) $v;
+			}
+
+			foreach ( $xml->children() as $k => $v ) {
+				$children[] = $this->xml2obj( $v, $force );
+			}
+
+
+			if ( $force or $text !== '' ) {
+				$obj->text = $text;
+			}
+
+			if ( $force or count( $attributes ) > 0 ) {
+				$obj->attributes = $attributes;
+			}
+
+			if ( $force or count( $children ) > 0 ) {
+				$obj->children = $children;
+			}
+
+
+			return $obj;
+		}
+
+		public function get_xml_content( $url ) {
+			$fileContents = file_get_contents( $url );
+//			$fileContents = str_replace( array( "\n", "\r", "\t" ), '', $fileContents );
+
+//			$fileContents = trim( str_replace( '"', "'", $fileContents ) );
+//			$fileContents = preg_replace( '/([a-z]{1})(:)([a-z]{1})/', '$1_$3', $fileContents );
+
+			return simplexml_load_string( $fileContents, 'SimpleXMLElement', LIBXML_PARSEHUGE | LIBXML_NOEMPTYTAG | LIBXML_BIGLINES );
+		}
+
+		public function parse_feed( $url ) {
+			$simpleXml = $this->get_xml_content( $url );
+			$json      = json_encode( $simpleXml );
+
+			return $json;
 		}
 
 		public function create_setting_page() {
@@ -129,7 +204,7 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 		}
 
 		public static function include_assets() {
-			wp_enqueue_script( 'formidableRSSParserLodash', FormidableRSSParser::assets_path( 'lodash.min' ), array( 'jquery' ), FormidableRSSParser::get_version(), true );
+			wp_enqueue_script( 'formidableRSSParserLodash', FormidableRSSParser::assets_path( 'lodash' ), array( 'jquery' ), FormidableRSSParser::get_version(), true );
 			wp_enqueue_script( 'formidableRSSParser', FormidableRSSParser::assets_path( 'script' ), array( 'jquery', 'formidableRSSParserLodash' ), FormidableRSSParser::get_version(), true );
 			wp_enqueue_style( 'formidableRSSParser', FormidableRSSParser::assets_path( 'style', 'css' ), array(), FormidableRSSParser::get_version() );
 			$args = array(

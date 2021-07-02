@@ -11,6 +11,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "dg/rss-php": "dev-master"
+        "dg/rss-php": "dev-master",
+        "debril/feed-io": "^5.0@beta"
     }
 }

@@ -19,23 +19,7 @@
 			<div class="episode-image">
 				<img src="https://ssl-static.libsyn.com/p/assets/c/f/f/7/cff791c11c1462d4/tnw-artwork-3000x3000.jpg" alt="Lorem Ipsum Dolor">
 			</div>
-			<div class="episodes-list">
-				<?php for ($i=1; $i <= 10; $i++) { ?>
-					<label class="element-list">
-						<div class="element-left">
-							<input type="checkbox" name="lorem" value="<?php echo $i ?>">
-						</div>
-						<div class="element-details">
-							<span class="element-title"><?php echo $i ?>. Lorem Ipsum Dolor</span>
-							<div class="element-sub-details">
-								<span class="element-date">May 19, 2021</span>
-								<span class="element-separator">&centerdot;</span>
-								<span class="element-duration">1:02:06</span>
-							</div>
-						</div>
-					</label>
-				<?php } ?>
-			</div>
+			<div class="episodes-list"></div>
 		</div>
 		<button class="import-episodes"><?php _e('Import', 'formidable-rss-parser') ?></button>
 	</div>
