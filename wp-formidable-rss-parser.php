@@ -45,6 +45,7 @@ class FormidableRSSParser {
 		self::$view = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
 		include_once 'vendor/autoload.php';
 		include_once 'classes/wp-formidable-rss-feed.php';
+		include_once 'classes/wp-formidable-rss-parse-save.php';
 		include_once 'classes/wp-formidable-rss-parser-admin.php';
 		new FormidableRSSParserAdmin();
 		include_once 'classes/wp-formidable-rss-parser-field-base.php';

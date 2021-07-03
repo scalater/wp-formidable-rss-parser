@@ -116,7 +116,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			});
 		}
 	},
-	importAjax: function(data, selection, onSuccessCallback, onCompleteCallback) {
+	importAjax: function(url, data, selection, targetFormIdShow, targetFormIdEpisode, onSuccessCallback, onCompleteCallback) {
 		let resultSelection = [];
 		jQuery.each(selection, function(i, e) {
 			resultSelection.push(jQuery(e).val());
@@ -125,12 +125,15 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
-			url: wpHtmlCssToImageObj.admin_url,
+			url: formidableRSSParserObj.admin_url,
 			data: {
 				'action': 'formidable_rss_parser_import',
 				'nonce': formidableRSSParserObj.nonce,
 				'data': resultData,
+				'url': url,
 				'selection': resultSelection,
+				'target_form_id_show': targetFormIdShow,
+				'target_form_id_episode': targetFormIdEpisode,
 			},
 			success: function(response) {
 				console.log(response);
@@ -150,7 +153,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
-			url: wpHtmlCssToImageObj.admin_url,
+			url: formidableRSSParserObj.admin_url,
 			data: {
 				'action': 'formidable_rss_parse',
 				'nonce': formidableRSSParserObj.nonce,
@@ -158,8 +161,8 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			},
 			success: function(response) {
 				if (response && response.success && response.data) {
-					// response.data.shows = JSON.parse(response.data.shows);
-					// onSuccessCallback(response.data);
+					// response.data.rss = JSON.parse(response.data.rss);
+					onSuccessCallback(response.data);
 					console.log(response.data);
 				}
 			},
@@ -225,9 +228,9 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 									} else {
 										formidableRSSParserInstance.rssAjax(rssUrl,
 											function(data) {
-												if (data.shows) {
+												if (data.rss) {
 													formidableRSSParserInstance.setShowData(data);
-													formidableRSSParserInstance.rssParser(data.shows);
+													formidableRSSParserInstance.rssParser(data.rss);
 												}
 											},
 											function() {
@@ -279,21 +282,21 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 				formidableRSSParserInstance.rssAjax(rssUrl,
 					function(data) {
-						if (data.count && data.count > 0 && data.shows) {
+						if (data.count && data.count > 0 && data.rss) {
 							formidableRSSParserInstance.setShowData(data);
 							let resultContainer = container.find('.formidable-rss-result-show');
 							//todo change the way the result list is build when data is an array of results
 							if (data.count === 1) {
 								let showHtml = '<label class="element-list">' +
 									'<div class="element-image">' +
-									'<img src="' + data.shows.image.url + '" alt="' + data.shows.image.title + '">' +
+									'<img src="' + data.rss.image.url + '" alt="' + data.rss.image.title + '">' +
 									'</div>' +
 									'<div class="element-details">' +
-									'<div class="element-title">' + data.shows.title + '</div>' +
+									'<div class="element-title">' + data.rss.title + '</div>' +
 									'<div class="element-sub-details">' +
-									'<span class="element-author">' + data.shows.title + '</span>' +
+									'<span class="element-author">' + data.rss.title + '</span>' +
 									'<span class="element-separator">&centerdot;</span>' +
-									'<span class="element-episode-amount">' + data.shows.item.length + '</span>' +
+									'<span class="element-episode-amount">' + data.rss.item.length + '</span>' +
 									'</div>' +
 									'</div>' +
 									'</label>';
@@ -317,16 +320,16 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		console.log('onShortCodeShowClick', jQuery(e));
 		const searchButton = container.find('button.search-show');
 		let data = formidableRSSParserInstance.getShowData();
-		if (data && data.shows && data.shows.item) {
+		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 			window.setTimeout(function() {
 				let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image img');
 				let listContainer = container.find('.formidable-rss-result-episodes-container .episodes-list');
-				imageContainer.attr('src', data.shows.image.url);
-				imageContainer.attr('alt', data.shows.image.title);
+				imageContainer.attr('src', data.rss.image.url);
+				imageContainer.attr('alt', data.rss.image.title);
 				listContainer.html('');
-				jQuery.each(data.shows.item, function(i, e) {
-					let fullDate = new Date(e['timestamp']);
+				jQuery.each(data.rss.item, function(i, e) {
+					let fullDate = new Date(parseInt(e.timestamp)*1000);
 					var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 					let formatDate = months[fullDate.getMonth()] + ' ' + fullDate.getDate() + ', ' + fullDate.getFullYear(); //May 19, 2021
 					let listHtml = '<label class="element-list">' +
@@ -338,7 +341,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						'<div class="element-sub-details">' +
 						'<span class="element-date">' + formatDate + '</span>' +
 						'<span class="element-separator">&centerdot;</span>' +
-						'<span class="element-duration">' + e['itunes:duration'] + '</span>' +
+						'<span class="element-duration">' + e['itunes_duration'] + '</span>' +
 						'</div>' +
 						'</div>' +
 						'</label>';
@@ -352,19 +355,31 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			throw 'No data detected or episodes items';
 		}
 	},
-	onShortCodeImport: function(e, container) {
+	onShortCodeImport: function(e, container, targetElement, targetFormIdShow, targetFormIdEpisode) {
 		const searchButton = container.find('button.search-show');
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		let data = formidableRSSParserInstance.getShowData();
-		if (data && data.shows && data.shows.item) {
+		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
-			formidableRSSParserInstance.importAjax(data, selectedEpisodes,
-				function(status) {
-					console.log('onShortCodeImport', status);
-				},
-				function() {
-					formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
-				});
+			let rssUrl = jQuery(targetElement).val();
+			if (rssUrl) {
+				let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
+				if (!isValidUrl) {
+					//todo add error for the shortcode interface
+					console.log('Invalid URL');
+				} else {
+					formidableRSSParserInstance.importAjax(rssUrl, data, selectedEpisodes, targetFormIdShow, targetFormIdEpisode,
+						function(status) {
+							console.log('onShortCodeImport', status);
+						},
+						function() {
+							formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+						});
+				}
+			} else {
+				//todo add error for the shortcode interface
+				console.log('Empty URL');
+			}
 		}
 	},
 	initShortCode: function() {
@@ -384,7 +399,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						formidableRSSParserInstance.onShortCodeSearch(e, container, targetElement);
 					});
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container button.import-episodes', function(e) {
-						formidableRSSParserInstance.onShortCodeImport(e, container);
+						formidableRSSParserInstance.onShortCodeImport(e, container, targetElement, targetFormIdShow, targetFormIdEpisode);
 					});
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function(e) {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);

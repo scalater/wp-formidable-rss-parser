@@ -21,14 +21,14 @@ if ( ! class_exists( 'FormidableRSSShortCode' ) ) {
 
 			$form_id_show = '';
 			if ( ! empty( $params['form_id_show'] ) ) {
-				$form_id_show = sprintf( 'data-form-id-show="%s"', $params['form_id_show'] );
+				$form_id_show = sprintf( 'data-form-id-show=%d', $params['form_id_show'] );
 			}
 
 			$html_id = FormidableRSSParser::random_string();
 
 			$form_id_episode = '';
 			if ( ! empty( $params['form_id_episode'] ) ) {
-				$form_id_episode = sprintf( 'data-form-id-episode="%s"', $params['form_id_episode'] );
+				$form_id_episode = sprintf( 'data-form-id-episode=%d', $params['form_id_episode'] );
 			}
 
 			$label = '';
@@ -38,7 +38,7 @@ if ( ! class_exists( 'FormidableRSSShortCode' ) ) {
 
 			$type = '';
 			if ( ! empty( $params['type'] ) ) {
-				$type = sprintf( 'data-type="%s"', $params['type'] );
+				$type = sprintf( 'data-type=%s', $params['type'] );
 			}
 
 			FormidableRSSParserAdmin::include_assets();
