@@ -72,6 +72,10 @@ gulp.task('sass:watch', function () {
 	gulp.watch(sassDir, ['sass']);
 });
 
+gulp.task('js:watch', ['clean-min-js'], function () {
+    gulp.watch(jsDir, ['js']);
+});
+
 gulp.task('styles', ['clean-min-styles'], function() {
     gulp.src(styleDir)
         .pipe(rename({suffix: '.min'}))
@@ -86,7 +90,7 @@ gulp.task('js', ['clean-min-js'], function() {
     gulp.src(jsDir)
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
-        .pipe(stripDebug())
+        //.pipe(stripDebug())
         .pipe(gulp.dest(jsDestination))
         .pipe(notify({message: 'TASK: "JS" Completed!', onLast: true}));
 });
@@ -95,4 +99,5 @@ gulp.task('default', [], function() {
     gulp.run('styles');
     gulp.run('js');
     gulp.run('sass:watch');
+    gulp.run('js:watch');
 });
