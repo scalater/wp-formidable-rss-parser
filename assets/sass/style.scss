@@ -78,6 +78,17 @@ $radius: $gap * 0.6;
 				}
 			}
 
+			.input-error {
+				display: block;
+				color: crimson;
+				font-size: small;
+				padding-top: $gap/2;
+
+				&:empty {
+					display: none;
+				}
+			}
+
 			button.search-show {
 				width: 100%;
 				height: $input-height;
@@ -88,6 +99,20 @@ $radius: $gap * 0.6;
 				&:hover {
 					background: $color-primary-dark;
 				}
+			}
+		}
+
+		&.err {
+			.title {
+				color: crimson;
+			}
+
+			.search-container .input-outer {
+				border-color: crimson;
+			}
+
+			&::after {
+				content: attr(data-err);
 			}
 		}
 	}
@@ -121,12 +146,16 @@ $radius: $gap * 0.6;
 			flex-direction: row;
 			align-items: center;
 			box-sizing: content-box;
-			scroll-snap-align: start;
+			/* scroll-snap-align: start; */
 			box-shadow: 0 1px 0 0 $color-primary-light;
 
 			&,
 			& * {
 				cursor: pointer;
+			}
+
+			&.hide {
+				display: none;
 			}
 
 			.element-image {
@@ -256,7 +285,7 @@ $radius: $gap * 0.6;
 			.episode-image {
 				width: 100%;
 				max-width: $size;
-				scroll-snap-align: start;
+				/* scroll-snap-align: start; */
 			}
 
 			.episodes-list {

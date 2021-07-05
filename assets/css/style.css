@@ -1,7 +1,3 @@
-.entry-content.clear {
-  padding: 0 20px;
-}
-
 .formidable-rss-parser-container-shortcode {
   width: 100%;
   max-width: 600px;
@@ -74,6 +70,17 @@
   fill: white;
 }
 
+.formidable-rss-parser-container-shortcode label .search-container .input-error {
+  display: block;
+  color: crimson;
+  font-size: small;
+  padding-top: 6px;
+}
+
+.formidable-rss-parser-container-shortcode label .search-container .input-error:empty {
+  display: none;
+}
+
 .formidable-rss-parser-container-shortcode label .search-container button.search-show {
   width: 100%;
   height: 42px;
@@ -84,6 +91,18 @@
 
 .formidable-rss-parser-container-shortcode label .search-container button.search-show:hover {
   background: #524d4d;
+}
+
+.formidable-rss-parser-container-shortcode label.err .title {
+  color: crimson;
+}
+
+.formidable-rss-parser-container-shortcode label.err .search-container .input-outer {
+  border-color: crimson;
+}
+
+.formidable-rss-parser-container-shortcode label.err::after {
+  content: attr(data-err);
 }
 
 .formidable-rss-parser-container-shortcode .formidable-rss-result-show,
@@ -118,7 +137,7 @@
   flex-direction: row;
   align-items: center;
   box-sizing: content-box;
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; */
   box-shadow: 0 1px 0 0 #e7e7e7;
 }
 
@@ -127,6 +146,11 @@
 .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes .element-list,
 .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes .element-list * {
   cursor: pointer;
+}
+
+.formidable-rss-parser-container-shortcode .formidable-rss-result-show .element-list.hide,
+.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes .element-list.hide {
+  display: none;
 }
 
 .formidable-rss-parser-container-shortcode .formidable-rss-result-show .element-list .element-image,
@@ -272,7 +296,7 @@
 .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episode-image {
   width: 100%;
   max-width: 192px;
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; */
 }
 
 .formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container .formidable-rss-result-episodes .episodes-list {

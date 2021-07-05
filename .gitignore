@@ -156,3 +156,4 @@ fabric.properties
 .idea/httpRequests
 
 /.php_cs.cache
+/jsconfig.json

@@ -1,5 +1,5 @@
 <div class="formidable-rss-parser-container-shortcode">
-	<label>
+	<label class="input-url">
 		<?php if ( ! empty( $label ) ): ?><p class="title"><?php echo esc_attr( $label ); ?></p><?php endif; ?>
 		<div class="search-container">
 			<div class="input-outer">
@@ -8,6 +8,7 @@
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.41,12l6.3-6.29a1,1,0,1,0-1.42-1.42L12,10.59,5.71,4.29A1,1,0,0,0,4.29,5.71L10.59,12l-6.3,6.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l6.29,6.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"/></svg>
 				</div>
 			</div>
+			<div class="input-error"></div>
 			<button class="search-show"><?php _e('Search', 'formidable-rss-parser') ?></button>
 		</div>
 	</label>

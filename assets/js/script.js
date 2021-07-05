@@ -1,43 +1,43 @@
 var formidableRSSParserData, formidableRSSParserInstance = {
-	setShowData: function(data) {
+	setShowData: function (data) {
 		formidableRSSParserData = data;
 	},
-	getShowData: function() {
+	getShowData: function () {
 		return formidableRSSParserData;
 	},
-	validateURL: function(url) {
+	validateURL: function (url) {
 		return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(
 			url);
 	},
-	showSubmitLoading: function($object) {
+	showSubmitLoading: function ($object) {
 		formidableRSSParserInstance.showLoadingIndicator($object);
 		formidableRSSParserInstance.disableSubmitButton($object);
 		formidableRSSParserInstance.disableSaveDraft($object);
 	},
-	showLoadingIndicator: function($object) {
+	showLoadingIndicator: function ($object) {
 		if (!$object.hasClass('frm_loading_form') && !$object.hasClass('frm_loading_prev')) {
 			formidableRSSParserInstance.addLoadingClass($object);
 			$object.trigger('frmStartFormLoading');
 		}
 	},
-	disableSubmitButton: function($form) {
+	disableSubmitButton: function ($form) {
 		$form.find('input[type="submit"], input[type="button"], button[type="submit"]').attr('disabled', 'disabled');
 	},
-	disableSaveDraft: function($form) {
+	disableSaveDraft: function ($form) {
 		$form.find('a.frm_save_draft').css('pointer-events', 'none');
 	},
-	enableSaveDraft: function($form) {
+	enableSaveDraft: function ($form) {
 		$form.find('a.frm_save_draft').css('pointer-events', '');
 	},
-	enableSubmitButton: function($form) {
+	enableSubmitButton: function ($form) {
 		$form.find('input[type="submit"], input[type="button"], button[type="submit"]').prop('disabled', false);
 	},
-	addLoadingClass: function($object) {
+	addLoadingClass: function ($object) {
 		var loadingClass = 'frm_loading_form';
 
 		$object.addClass(loadingClass);
 	},
-	removeSubmitLoading: function($object, enable, processesRunning) {
+	removeSubmitLoading: function ($object, enable, processesRunning) {
 		var loadingForm;
 
 		if (processesRunning > 0) {
@@ -55,7 +55,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			formidableRSSParserInstance.enableSaveDraft(loadingForm);
 		}
 	},
-	addFieldError: function($fieldCont, key, jsErrors) {
+	addFieldError: function ($fieldCont, key, jsErrors) {
 		var input, id, describedBy;
 		if ($fieldCont.length && $fieldCont.is(':visible')) {
 			$fieldCont.addClass('frm_blank_field');
@@ -76,7 +76,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 
 		jQuery(document).trigger('frmAddFieldError', [$fieldCont, key, jsErrors]);
 	},
-	removeFieldError: function($fieldCont) {
+	removeFieldError: function ($fieldCont) {
 		var errorMessage = $fieldCont.find('.frm_error'),
 			errorId = errorMessage.attr('id'),
 			input = $fieldCont.find('input, select, textarea'),
@@ -91,7 +91,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			input.attr('aria-describedby', describedBy);
 		}
 	},
-	shouldJSValidate: function(object) {
+	shouldJSValidate: function (object) {
 		var validate = jQuery(object).hasClass('frm_js_validate');
 		if (validate && typeof frmProForm !== 'undefined' && (frmProForm.savingDraft(object) || frmProForm.goingToPreviousPage(object))) {
 			validate = false;
@@ -99,13 +99,13 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 
 		return validate;
 	},
-	rssParser: function(data) {
+	rssParser: function (data) {
 		if (!data) {
 			return;
 		}
 		let parserFields = jQuery('[data-parser-path]');
 		if (parserFields && parserFields.length > 0) {
-			jQuery.each(parserFields, function(i, e) {
+			jQuery.each(parserFields, function (i, e) {
 				let parserPath = jQuery(e).attr('data-parser-path');
 				if (parserPath) {
 					let parsedData = _.get(data, parserPath);
@@ -116,9 +116,9 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			});
 		}
 	},
-	importAjax: function(url, data, selection, targetFormIdShow, targetFormIdEpisode, onSuccessCallback, onCompleteCallback) {
+	importAjax: function (url, data, selection, targetFormIdShow, targetFormIdEpisode, onSuccessCallback, onCompleteCallback) {
 		let resultSelection = [];
-		jQuery.each(selection, function(i, e) {
+		jQuery.each(selection, function (i, e) {
 			resultSelection.push(jQuery(e).val());
 		});
 		let resultData = JSON.stringify(data);
@@ -135,21 +135,21 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				'target_form_id_show': targetFormIdShow,
 				'target_form_id_episode': targetFormIdEpisode,
 			},
-			success: function(response) {
+			success: function (response) {
 				console.log(response);
 				if (response && response.success && response.status) {
 					onSuccessCallback(response.status);
 				}
 			},
-			error: function(request, status, error) {
+			error: function (request, status, error) {
 				throw request.responseText;
 			},
-			complete: function() {
+			complete: function () {
 				onCompleteCallback();
 			},
 		});
 	},
-	rssAjax: function(url, onSuccessCallback, onCompleteCallback) {
+	rssAjax: function (url, onSuccessCallback, onCompleteCallback) {
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
@@ -159,25 +159,25 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				'nonce': formidableRSSParserObj.nonce,
 				'url': url,
 			},
-			success: function(response) {
+			success: function (response) {
 				if (response && response.success && response.data) {
 					// response.data.rss = JSON.parse(response.data.rss);
 					onSuccessCallback(response.data);
 					console.log(response.data);
 				}
 			},
-			error: function(request, status, error) {
+			error: function (request, status, error) {
 				throw request.responseText;
 			},
-			complete: function() {
+			complete: function () {
 				onCompleteCallback();
 			},
 		});
 	},
-	onRssKeyOut: function(callback, delay) {
+	onRssKeyOut: function (callback, delay) {
 		delay || (delay = 500);
 		var timeoutReference;
-		var doneTyping = function(elt) {
+		var doneTyping = function (elt) {
 			if (!timeoutReference) {
 				return;
 			}
@@ -185,26 +185,26 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			callback(elt);
 		};
 
-		this.each(function() {
+		this.each(function () {
 			var self = jQuery(this);
-			self.on('keyup', function() {
+			self.on('keyup', function () {
 				if (timeoutReference) {
 					clearTimeout(timeoutReference);
 				}
-				timeoutReference = setTimeout(function() {
+				timeoutReference = setTimeout(function () {
 					doneTyping(self);
 				}, delay);
-			}).on('blur', function() {
+			}).on('blur', function () {
 				doneTyping(self);
 			});
 		});
 
 		return this;
 	},
-	initFormidableField: function() {
+	initFormidableField: function () {
 		let containers = jQuery('.formidable-rss-parser-container');
 		if (containers && containers.length > 0) {
-			jQuery.each(containers, function(i, e) {
+			jQuery.each(containers, function (i, e) {
 				let container = jQuery(e);
 				let targetElement = container.find('.formidable-rss-parser');
 				if (targetElement && targetElement.length > 0) {
@@ -215,7 +215,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						let targetFormId = '#frm_form_' + targetElement.attr('data-form-id') + '_container form';
 						let targetFormElement = jQuery(targetFormId);
 						if (targetFormElement && targetFormElement.length > 0) {
-							targetElement.onRssKeyOut(function(e) {
+							targetElement.onRssKeyOut(function (e) {
 								var rssUrl = jQuery(e).val();
 								if (rssUrl) {
 									formidableRSSParserInstance.showSubmitLoading(targetFormElement);
@@ -227,13 +227,13 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 										formidableRSSParserInstance.addFieldError(targetElementContainer, targetElementContainerId, jsErrors);
 									} else {
 										formidableRSSParserInstance.rssAjax(rssUrl,
-											function(data) {
+											function (data) {
 												if (data.rss) {
 													formidableRSSParserInstance.setShowData(data);
 													formidableRSSParserInstance.rssParser(data.rss);
 												}
 											},
-											function() {
+											function () {
 												formidableRSSParserInstance.removeSubmitLoading(targetFormElement);
 											},
 										);
@@ -246,7 +246,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			});
 		}
 	},
-	clearShortCodeInput: function(element, container) {
+	clearShortCodeInput: function (element, container) {
 		if (!element) {
 			return;
 		}
@@ -254,14 +254,14 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		container.find('.formidable-rss-result-show').hide();
 		container.find('.formidable-rss-result-episodes-container').hide();
 	},
-	shortCodeLoadingAdd: function(button) {
+	shortCodeLoadingAdd: function (button) {
 		if (!button) {
 			return;
 		}
 		let text = jQuery(button).text();
 		jQuery(button).attr('data-default-text', text).text('Loading...').attr('disabled', 'disabled');
 	},
-	shortCodeLoadingRemove: function(button) {
+	shortCodeLoadingRemove: function (button) {
 		if (!button) {
 			return;
 		}
@@ -269,19 +269,33 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		jQuery(button).removeAttr('disabled');
 		jQuery(button).text(text);
 	},
-	onShortCodeSearch: function(e, container, targetElement) {
+	onShortCodeSearch: function (e, container, targetElement) {
 		console.log('onShortCodeSearch', container);
 		const searchButton = container.find('button.search-show');
 		let rssUrl = jQuery(targetElement).val();
+
+		const onError = (reason) => {
+			jQuery(container).find('label.input-url').addClass('err');
+			jQuery(container).find('label.input-url .search-container .input-error').html(reason);
+			jQuery(targetElement).select();
+		};
+
+		const onValid = () => {
+			jQuery(container).find('label.input-url').removeClass('err');
+			jQuery(container).find('label.input-url .search-container .input-error').html('');
+		};
+
 		if (rssUrl) {
+			onValid();
 			let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
 			if (!isValidUrl) {
-				//todo add error for the shortcode interface
 				console.log('Invalid URL');
+				onError('Invalid URL');
 			} else {
+				onValid();
 				formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 				formidableRSSParserInstance.rssAjax(rssUrl,
-					function(data) {
+					function (data) {
 						if (data.count && data.count > 0 && data.rss) {
 							formidableRSSParserInstance.setShowData(data);
 							let resultContainer = container.find('.formidable-rss-result-show');
@@ -304,7 +318,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 							}
 						}
 					},
-					function() {
+					function () {
 						formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
 						container.find('.formidable-rss-result-show').show();
 						container.find('.formidable-rss-result-episodes-container').hide();
@@ -312,39 +326,44 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				);
 			}
 		} else {
-			//todo add error for the shortcode interface
 			console.log('Empty URL');
+			onError('Empty URL');
 		}
 	},
-	onShortCodeShowClick: function(e, container) {
+	onShortCodeShowClick: function (e, container) {
 		console.log('onShortCodeShowClick', jQuery(e));
 		const searchButton = container.find('button.search-show');
 		let data = formidableRSSParserInstance.getShowData();
 		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
-			window.setTimeout(function() {
+			window.setTimeout(function () {
 				let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image img');
 				let listContainer = container.find('.formidable-rss-result-episodes-container .episodes-list');
 				imageContainer.attr('src', data.rss.image.url);
 				imageContainer.attr('alt', data.rss.image.title);
 				listContainer.html('');
-				jQuery.each(data.rss.item, function(i, e) {
-					let fullDate = new Date(parseInt(e.timestamp)*1000);
+				listContainer.scrollTop(0);
+
+				jQuery.each(data.rss.item, function (i, e) {
+					let fullDate = new Date(parseInt(e.timestamp) * 1000);
 					var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 					let formatDate = months[fullDate.getMonth()] + ' ' + fullDate.getDate() + ', ' + fullDate.getFullYear(); //May 19, 2021
-					let listHtml = '<label class="element-list">' +
-						'<div class="element-left">' +
-						'<input type="checkbox" name="lorem" value="' + i + '">' +
-						'</div>' +
-						'<div class="element-details">' +
-						'<span class="element-title">' + e['title'] + '</span>' +
-						'<div class="element-sub-details">' +
-						'<span class="element-date">' + formatDate + '</span>' +
-						'<span class="element-separator">&centerdot;</span>' +
-						'<span class="element-duration">' + e['itunes_duration'] + '</span>' +
-						'</div>' +
-						'</div>' +
-						'</label>';
+					const hide = i >= 5 ? 'hide' : '';
+					let listHtml = `
+					<label class="element-list ${hide}">
+						<div class="element-left">
+							<input type="checkbox" name="lorem" value="${i}">
+						</div>
+						<div class="element-details">
+							<span class="element-title">${e['title']}</span>
+							<div class="element-sub-details">
+								<span class="element-date">${formatDate}</span>
+								<span class="element-separator">&centerdot;</span>
+								<span class="element-duration">${e['itunes_duration']}</span>
+							</div>
+						</div>
+					</label>
+					`;
 					listContainer.append(listHtml);
 				});
 				formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
@@ -355,68 +374,102 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			throw 'No data detected or episodes items';
 		}
 	},
-	onShortCodeImport: function(e, container, targetElement, targetFormIdShow, targetFormIdEpisode) {
+	onShortCodeImport: function (e, container, targetElement, targetFormIdShow, targetFormIdEpisode) {
 		const searchButton = container.find('button.search-show');
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		let data = formidableRSSParserInstance.getShowData();
+
+		const onError = (reason) => {
+			jQuery(container).find('label.input-url').addClass('err');
+			jQuery(container).find('label.input-url .search-container .input-error').html(reason);
+			jQuery(targetElement).select();
+		};
+
+		const onValid = () => {
+			jQuery(container).find('label.input-url').removeClass('err');
+			jQuery(container).find('label.input-url .search-container .input-error').html('');
+		};
+
 		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 			let rssUrl = jQuery(targetElement).val();
 			if (rssUrl) {
+				onValid();
 				let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
 				if (!isValidUrl) {
-					//todo add error for the shortcode interface
+					onError('Invalid URL');
 					console.log('Invalid URL');
 				} else {
+					onValid();
 					formidableRSSParserInstance.importAjax(rssUrl, data, selectedEpisodes, targetFormIdShow, targetFormIdEpisode,
-						function(status) {
+						function (status) {
 							console.log('onShortCodeImport', status);
 						},
-						function() {
+						function () {
 							formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
 						});
 				}
 			} else {
-				//todo add error for the shortcode interface
+				onError('Empty URL');
 				console.log('Empty URL');
 			}
 		}
 	},
-	initShortCode: function() {
+	initShortCode: function () {
 		let containers = jQuery('.formidable-rss-parser-container-shortcode');
 		if (containers && containers.length > 0) {
-			jQuery.each(containers, function(i, e) {
+			jQuery.each(containers, function (i, e) {
 				let container = jQuery(e);
 				let targetElement = container.find('.formidable-rss-parser');
 				if (targetElement && targetElement.length > 0) {
 					let targetFormIdShow = targetElement.attr('data-form-id-show');
 					let targetFormIdEpisode = targetElement.attr('data-form-id-episode');
 					let targetType = targetElement.attr('data-type');
-					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-show label.element-list', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-show label.element-list', function (e) {
 						formidableRSSParserInstance.onShortCodeShowClick(e, container);
 					});
-					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .search-container button.search-show', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .search-container button.search-show', function (e) {
 						formidableRSSParserInstance.onShortCodeSearch(e, container, targetElement);
 					});
-					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container button.import-episodes', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container button.import-episodes', function (e) {
 						formidableRSSParserInstance.onShortCodeImport(e, container, targetElement, targetFormIdShow, targetFormIdEpisode);
 					});
-					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function(e) {
+					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function (e) {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);
 					});
 				}
 			});
 		}
 	},
-	init: function() {
+	init: function () {
 		jQuery.fn.onRssKeyOut = formidableRSSParserInstance.onRssKeyOut;
 		formidableRSSParserInstance.initFormidableField();
 		formidableRSSParserInstance.initShortCode();
+
+		jQuery('.formidable-rss-result-episodes-container .episodes-list, .formidable-rss-result-episodes-container .formidable-rss-result-episodes').on('scroll', function (e) {
+			const attr = 'data-wait';
+			const height = jQuery(this).height();
+			const scrollHeight = jQuery(this)[0].scrollHeight;
+			const scrollTop = jQuery(this).scrollTop();
+			const elements = jQuery(this).find('label.element-list.hide');
+			const newScroll = (scrollHeight - scrollTop - (height * 2) < 0) && (elements.length > 0) && (!jQuery(this).attr(attr));
+
+			if (newScroll) {
+				jQuery(this).attr(attr, true);
+				jQuery(elements).each(function (index) {
+					if (index > 5) return false;
+
+					jQuery(this).removeClass('hide');
+				});
+
+				jQuery(this).removeAttr(attr);
+			}
+		});
 	},
 };
 
 try {
-	jQuery(document).ready(function() {
+	jQuery(document).ready(function () {
 		formidableRSSParserInstance.init();
 	});
 } catch (e) {
