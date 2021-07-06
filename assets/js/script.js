@@ -135,11 +135,12 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			},
 			success: function(response) {
 				console.log(response);
-				if (response && response.success && response.status) {
-					onSuccessCallback(response.status);
+				if (response && response.success && response.data) {
+					onSuccessCallback(response.data);
 				}
 			},
 			error: function(request, status, error) {
+				console.log(error);
 				throw request.responseText;
 			},
 			complete: function() {
@@ -165,6 +166,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				}
 			},
 			error: function(request, status, error) {
+				console.log(request.responseText);
 				throw request.responseText;
 			},
 			complete: function() {
@@ -372,8 +374,9 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			throw 'No data detected or episodes items';
 		}
 	},
-	onShortCodeImport: function(e, container, targetElement, targetFormIdShow, targetFormIdEpisode) {
+	onShortCodeImport: function(e, container, targetElement, targetFormIdShow, targetFormIdEpisode, redirect) {
 		const searchButton = container.find('button.search-show');
+		const importButton = container.find('button.import-episodes');
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		let data = formidableRSSParserInstance.getShowData();
 
@@ -390,6 +393,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 
 		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+			formidableRSSParserInstance.shortCodeLoadingAdd(importButton);
 			let rssUrl = jQuery(targetElement).val();
 			if (rssUrl) {
 				onValid();
@@ -401,10 +405,13 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 					onValid();
 					formidableRSSParserInstance.importAjax(rssUrl, selectedEpisodes, targetFormIdShow, targetFormIdEpisode,
 						function(status) {
-							console.log('onShortCodeImport', status);
+							if(redirect && status){
+								document.location.href = redirect;
+							}
 						},
 						function() {
 							formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+							formidableRSSParserInstance.shortCodeLoadingRemove(importButton);
 						});
 				}
 			} else {
@@ -423,6 +430,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 					let targetFormIdShow = targetElement.attr('data-form-id-show');
 					let targetFormIdEpisode = targetElement.attr('data-form-id-episode');
 					let targetType = targetElement.attr('data-type');
+					let redirect = targetElement.attr('data-redirect');
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-show label.element-list', function(e) {
 						formidableRSSParserInstance.onShortCodeShowClick(e, container);
 					});
@@ -430,7 +438,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						formidableRSSParserInstance.onShortCodeSearch(e, container, targetElement);
 					});
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .formidable-rss-result-episodes-container button.import-episodes', function(e) {
-						formidableRSSParserInstance.onShortCodeImport(e, container, targetElement, targetFormIdShow, targetFormIdEpisode);
+						formidableRSSParserInstance.onShortCodeImport(e, container, targetElement, targetFormIdShow, targetFormIdEpisode, redirect);
 					});
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function(e) {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);

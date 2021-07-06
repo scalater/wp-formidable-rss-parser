@@ -16,6 +16,7 @@ if ( ! class_exists( 'FormidableRSSShortCode' ) ) {
 				'form_id_show'    => '',
 				'form_id_episode' => '',
 				'type'            => 'full',
+				'redirect'        => '',
 				'label'           => __( 'RSS Url', 'formidable-rss-parser' ),
 			), $attr );
 
@@ -34,6 +35,11 @@ if ( ! class_exists( 'FormidableRSSShortCode' ) ) {
 			$label = '';
 			if ( ! empty( $params['label'] ) ) {
 				$label = $params['label'];
+			}
+
+			$redirect = '';
+			if ( ! empty( $params['redirect'] ) ) {
+				$redirect = sprintf( 'data-redirect=%s', esc_url($params['redirect']) );
 			}
 
 			$type = '';
