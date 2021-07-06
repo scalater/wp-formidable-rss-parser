@@ -42,7 +42,7 @@ if ( ! class_exists( 'FormidableRSSParserFieldBase' ) ) {
 				add_filter( 'frmpro_fields_replace_shortcodes', array( $this, 'add_formidable_custom_short_code' ), 10, 4 );
 				add_filter( "frm_validate_field_entry", array( $this, "process_validate_frm_entry" ), 10, 3 );
 				add_filter( 'frm_field_classes', array( $this, 'process_fields_class' ), 10, 2 );
-				add_filter( 'frm_email_value', array( $this, 'process_replace_value_in_mail' ), 15, 3 );
+//				add_filter( 'frm_email_value', array( $this, 'process_replace_value_in_mail' ), 15, 3 ); todo @deprecated since 2.0.4 use frm_display_{fieldtype}_value_custom instead
 			}
 
 		}

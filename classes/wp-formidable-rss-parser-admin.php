@@ -32,11 +32,9 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 					die();
 				}
 
-				$target_form_id_show = intval($_POST['target_form_id_show']);
-				$target_form_id_episode = intval($_POST['target_form_id_episode']);
-				$selections = array_map( 'intval', $_POST['selection'] );
-				$data_clean = stripslashes_deep( $_POST['data'] );
-				$data       = json_decode( $data_clean );
+				$target_form_id_show    = intval( $_POST['target_form_id_show'] );
+				$target_form_id_episode = intval( $_POST['target_form_id_episode'] );
+				$selections             = array_map( 'intval', $_POST['selection'] );
 
 				$url           = sanitize_text_field( $_POST['url'] );
 				$feed_response = FormidableRSSFeed::load_rss( $url );
@@ -44,10 +42,37 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 				$result = false;
 				if ( ! empty( $feed_response ) ) {
 					$channel           = $feed_response->get_channel();
-					$channel_for_parse = FormidableRSSFeed::channel_for_parce( $channel, true );
+					$rss_to_parse = FormidableRSSFeed::channel_for_parce( $channel, true, true );
 
-					$save = new FormidableRSSSave($target_form_id_show, $target_form_id_episode);
-					$save->get_fields_mapping();
+					$episodes = array();
+					foreach ( $selections as $selection ) {
+						if ( isset($channel->item[ $selection ]) ) {
+							$episodes[] = $channel->item[ $selection ];
+						}
+					}
+
+					$save    = new FormidableRSSSave( $target_form_id_show, $target_form_id_episode, $rss_to_parse );
+					$show_mapping = $save->get_fields_mapping();
+					$show_id = 0;
+					if ( ! empty( $show_mapping ) ) {
+						$show_metas = $save->get_mapped_metas( $show_mapping );
+						if ( ! empty( $show_metas ) ) {
+							$show_id = $save->insert_into_form( $target_form_id_show, $show_metas );
+						}
+					}
+					$episodes_mapping = $save->get_fields_mapping('target_form_id_episodes');
+					if ( ! empty( $episodes_mapping ) ) {
+						if ( ! empty( $episodes ) ) {
+							foreach ( $episodes as $episode ) {
+								$episode = FormidableRSSFeed::channel_for_parce( $episode, true, true );
+								$episode_metas = $save->get_mapped_metas( $episodes_mapping, $episode, $show_id );
+								if ( ! empty( $episode_metas ) ) {
+									$save->insert_into_form( $target_form_id_episode, $episode_metas );
+								}
+							}
+						}
+					}
+
 				}
 
 				if ( $result ) {

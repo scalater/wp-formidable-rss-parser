@@ -36,10 +36,11 @@ if ( ! class_exists( 'FormidableRSSFeed' ) ) {
 			if ( ! $this->xml ) {
 				throw new FeedException( 'Invalid feed.' );
 			}
+
 			return $this->xml;
 		}
 
-		public static function channel_for_parce( $xml, $force = false ) {
+		public static function channel_for_parce( $xml, $force = false, $include_items = false ) {
 
 			$obj = new StdClass();
 
@@ -54,7 +55,11 @@ if ( ! class_exists( 'FormidableRSSFeed' ) ) {
 			}
 
 			foreach ( $xml->children() as $k => $v ) {
-				if ( $k !== 'item' ) {
+				if ( ! $include_items ) {
+					if ( $k !== 'item' ) {
+						$children[] = self::channel_for_parce( $v, $force );
+					}
+				} else {
 					$children[] = self::channel_for_parce( $v, $force );
 				}
 			}
