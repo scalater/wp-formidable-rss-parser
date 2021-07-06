@@ -48,9 +48,9 @@ class FormidableRSSParser {
 		include_once 'classes/wp-formidable-rss-parse-save.php';
 		include_once 'classes/wp-formidable-rss-parser-admin.php';
 		new FormidableRSSParserAdmin();
-		include_once 'classes/wp-formidable-rss-parser-field-base.php';
-		include_once 'classes/wp-formidable-rss-parser-field.php';
-		new FormidableRSSParserField();
+//		include_once 'classes/wp-formidable-rss-parser-field-base.php';
+//		include_once 'classes/wp-formidable-rss-parser-field.php';
+//		new FormidableRSSParserField();
 		include_once 'classes/wp-formidable-rss-parser-options.php';
 		new FormidableRSSParserFieldOptions();
 		include 'classes/wp-formidable-rss-shortcode.php';

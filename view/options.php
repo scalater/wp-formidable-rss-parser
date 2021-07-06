@@ -10,6 +10,6 @@
 		<label for="field_options[formidable_rss_option_<?php echo esc_attr( $field['id'] ) ?>]"><?php _e( "Option 1", 'formidable-rss-parser' ); ?></label>
 	</td>
 	<td>
-		<input type="checkbox" <?php echo esc_attr( $show_filter_group ) ?> name="field_options[formidable_rss_option_<?php echo esc_attr( $field['id'] ) ?>]" id="field_options[formidable_rss_option_<?php echo esc_attr( $field['id'] ) ?>]" value="1"/>
+		<input type="checkbox" name="field_options[formidable_rss_option_<?php echo esc_attr( $field['id'] ) ?>]" id="field_options[formidable_rss_option_<?php echo esc_attr( $field['id'] ) ?>]" value="1"/>
 	</td>
 </tr>
