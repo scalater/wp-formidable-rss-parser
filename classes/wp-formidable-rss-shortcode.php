@@ -48,8 +48,9 @@ if ( ! class_exists( 'FormidableRSSShortCode' ) ) {
 			}
 
 			FormidableRSSParserAdmin::include_assets();
-
+			ob_start();
 			include( FormidableRSSParser::get_view() . 'shortcode.php' );
+			return ob_get_clean();
 		}
 	}
 }
