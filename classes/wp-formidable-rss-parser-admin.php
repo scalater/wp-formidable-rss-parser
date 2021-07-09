@@ -110,7 +110,7 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 				}
 			} catch ( Exception $ex ) {
 				FormidableRSSParser::error_log( $ex->getMessage() );
-				wp_send_json_error( array() );
+				wp_send_json_error( $ex->getMessage(), '403' );
 			}
 			die();
 		}

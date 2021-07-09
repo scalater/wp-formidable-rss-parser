@@ -1,4 +1,5 @@
-var formidableRSSParserData, formidableRSSParserInstance = {
+var formidableRSSParserData;
+var formidableRSSParserInstance = {
 	setShowData: function(data) {
 		formidableRSSParserData = data;
 	},
@@ -140,15 +141,17 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				}
 			},
 			error: function(request, status, error) {
-				console.log(error);
-				throw request.responseText;
+				if(request.responseJSON && !request.responseJSON.success) {
+					console.error('[formidableRSSParser] - ' + request.responseJSON.data);
+				}
 			},
 			complete: function() {
 				onCompleteCallback();
 			},
 		});
 	},
-	rssAjax: function(url, onSuccessCallback, onCompleteCallback) {
+	rssAjax: function(url, container, targetElement, onSuccessCallback, onCompleteCallback) {
+		formidableRSSParserInstance.onValid(container);
 		jQuery.ajax({
 			type: 'POST',
 			dataType: 'json',
@@ -166,8 +169,10 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				}
 			},
 			error: function(request, status, error) {
-				console.log(request.responseText);
-				throw request.responseText;
+				if(request.responseJSON && !request.responseJSON.success) {
+					console.error('[formidableRSSParser] - ' + request.responseJSON.data);
+					formidableRSSParserInstance.onError(request.responseJSON.data, container, targetElement);
+				}
 			},
 			complete: function() {
 				onCompleteCallback();
@@ -251,6 +256,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			return;
 		}
 		jQuery(element).val('');
+		formidableRSSParserInstance.onValid(container);
 		container.find('.formidable-rss-result-show').hide();
 		container.find('.formidable-rss-result-episodes-container').hide();
 	},
@@ -274,27 +280,16 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		const searchButton = container.find('button.search-show');
 		let rssUrl = jQuery(targetElement).val();
 
-		const onError = (reason) => {
-			jQuery(container).find('label.input-url').addClass('err');
-			jQuery(container).find('label.input-url .search-container .input-error').html(reason);
-			jQuery(targetElement).select();
-		};
-
-		const onValid = () => {
-			jQuery(container).find('label.input-url').removeClass('err');
-			jQuery(container).find('label.input-url .search-container .input-error').html('');
-		};
-
 		if (rssUrl) {
-			onValid();
+			formidableRSSParserInstance.onValid(container);
 			let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
 			if (!isValidUrl) {
 				console.log('Invalid URL');
-				onError('Invalid URL');
+				formidableRSSParserInstance.onError('Invalid URL', container, targetElement);
 			} else {
-				onValid();
+				formidableRSSParserInstance.onValid(container);
 				formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
-				formidableRSSParserInstance.rssAjax(rssUrl,
+				formidableRSSParserInstance.rssAjax(rssUrl, container, targetElement,
 					function(data) {
 						if (data.count && data.count > 0 && data.rss) {
 							formidableRSSParserInstance.setShowData(data);
@@ -327,7 +322,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 			}
 		} else {
 			console.log('Empty URL');
-			onError('Empty URL');
+			formidableRSSParserInstance.onError('Empty URL', container, targetElement);
 		}
 	},
 	onShortCodeShowClick: function(e, container) {
@@ -369,10 +364,19 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 				formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
 				container.find('.formidable-rss-result-show').hide();
 				container.find('.formidable-rss-result-episodes-container').show();
-			}, 500);
+			}, 250);
 		} else {
-			throw 'No data detected or episodes items';
+			throw new Error('No data detected or episodes items');
 		}
+	},
+	onError: function(reason, container, targetElement) {
+		jQuery(container).find('label.input-url').addClass('err');
+		jQuery(container).find('label.input-url .search-container .input-error').html(reason);
+		jQuery(targetElement).select();
+	},
+	onValid: function(container) {
+		jQuery(container).find('label.input-url').removeClass('err');
+		jQuery(container).find('label.input-url .search-container .input-error').html('');
 	},
 	onShortCodeImport: function(e, container, targetElement, targetFormIdShow, targetFormIdEpisode, redirect) {
 		const searchButton = container.find('button.search-show');
@@ -380,29 +384,18 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		let selectedEpisodes = container.find('.formidable-rss-result-episodes label.element-list input[type="checkbox"]:checked');
 		let data = formidableRSSParserInstance.getShowData();
 
-		const onError = (reason) => {
-			jQuery(container).find('label.input-url').addClass('err');
-			jQuery(container).find('label.input-url .search-container .input-error').html(reason);
-			jQuery(targetElement).select();
-		};
-
-		const onValid = () => {
-			jQuery(container).find('label.input-url').removeClass('err');
-			jQuery(container).find('label.input-url .search-container .input-error').html('');
-		};
-
 		if (data && data.rss && data.rss.item) {
 			formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 			formidableRSSParserInstance.shortCodeLoadingAdd(importButton);
 			let rssUrl = jQuery(targetElement).val();
 			if (rssUrl) {
-				onValid();
+				formidableRSSParserInstance.onValid(container);
 				let isValidUrl = formidableRSSParserInstance.validateURL(rssUrl);
 				if (!isValidUrl) {
-					onError('Invalid URL');
+					formidableRSSParserInstance.onError('Invalid URL', container, targetElement);
 					console.log('Invalid URL');
 				} else {
-					onValid();
+					formidableRSSParserInstance.onValid(container);
 					formidableRSSParserInstance.importAjax(rssUrl, selectedEpisodes, targetFormIdShow, targetFormIdEpisode,
 						function(status) {
 							if(redirect && status){
@@ -415,7 +408,7 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						});
 				}
 			} else {
-				onError('Empty URL');
+				formidableRSSParserInstance.onError('Empty URL', container, targetElement);
 				console.log('Empty URL');
 			}
 		}
@@ -444,6 +437,25 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);
 					});
 				}
+				jQuery('.formidable-rss-result-episodes-container .episodes-list, .formidable-rss-result-episodes-container .formidable-rss-result-episodes').on('scroll', function (e) {
+					const attr = 'data-wait';
+					const height = jQuery(this).height();
+					const scrollHeight = jQuery(this)[0].scrollHeight;
+					const scrollTop = jQuery(this).scrollTop();
+					const elements = jQuery(this).find('label.element-list.hide');
+					const newScroll = (scrollHeight - scrollTop - (height * 2) < 0) && (elements.length > 0) && (!jQuery(this).attr(attr));
+
+					if (newScroll) {
+						jQuery(this).attr(attr, true);
+						jQuery(elements).each(function (index) {
+							if (index > 5) return false;
+
+							jQuery(this).removeClass('hide');
+						});
+
+						jQuery(this).removeAttr(attr);
+					}
+				});
 			});
 		}
 	},
@@ -451,26 +463,6 @@ var formidableRSSParserData, formidableRSSParserInstance = {
 		jQuery.fn.onRssKeyOut = formidableRSSParserInstance.onRssKeyOut;
 		formidableRSSParserInstance.initFormidableField();
 		formidableRSSParserInstance.initShortCode();
-
-		jQuery('.formidable-rss-result-episodes-container .episodes-list, .formidable-rss-result-episodes-container .formidable-rss-result-episodes').on('scroll', function (e) {
-			const attr = 'data-wait';
-			const height = jQuery(this).height();
-			const scrollHeight = jQuery(this)[0].scrollHeight;
-			const scrollTop = jQuery(this).scrollTop();
-			const elements = jQuery(this).find('label.element-list.hide');
-			const newScroll = (scrollHeight - scrollTop - (height * 2) < 0) && (elements.length > 0) && (!jQuery(this).attr(attr));
-
-			if (newScroll) {
-				jQuery(this).attr(attr, true);
-				jQuery(elements).each(function (index) {
-					if (index > 5) return false;
-
-					jQuery(this).removeClass('hide');
-				});
-
-				jQuery(this).removeAttr(attr);
-			}
-		});
 	},
 };
 
