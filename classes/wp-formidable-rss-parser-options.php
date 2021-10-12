@@ -36,6 +36,7 @@ if ( ! class_exists( 'FormidableRSSParserFieldOptions' ) ) {
 		 */
 		public function field_field_option_form( $field, $display, $values ) {
 			$value = $field['rss_parser_match'] ?? "";
+			$is_rss_key = $field['rss_parser_rss_key'] ?? false;
 
 			require( FormidableRSSParser::get_view() . 'parser-options.php' );
 		}
@@ -53,6 +54,7 @@ if ( ! class_exists( 'FormidableRSSParserFieldOptions' ) ) {
 
 			$defaults = array(
 				'rss_parser_match' => '',
+				'rss_parser_rss_key' => false,
 			);
 
 			foreach ( $defaults as $opt => $default ) {
