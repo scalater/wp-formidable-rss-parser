@@ -215,7 +215,7 @@ if ( ! class_exists( 'FormidableRSSFeed' ) ) {
 				}
 
 				if(wp_get_environment_type() == 'local'){
-					curl_setopt($curl, CURLOPT_SSL_OPTIONS, false);
+					curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 				}
 
 				$result = curl_exec( $curl );
