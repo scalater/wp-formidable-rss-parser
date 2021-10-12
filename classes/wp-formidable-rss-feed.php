@@ -213,6 +213,11 @@ if ( ! class_exists( 'FormidableRSSFeed' ) ) {
 				if ( ! ini_get( 'open_basedir' ) ) {
 					curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true ); // sometime is useful :)
 				}
+
+				if(wp_get_environment_type() == 'local'){
+					curl_setopt($curl, CURLOPT_SSL_OPTIONS, false);
+				}
+
 				$result = curl_exec( $curl );
 
 				return curl_errno( $curl ) === 0 && curl_getinfo( $curl, CURLINFO_HTTP_CODE ) === 200
