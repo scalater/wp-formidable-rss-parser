@@ -8,16 +8,12 @@
 <tr>
 	<td>
 		<label for="field_options[rss_parser_match_<?php echo esc_attr( $field['id'] ) ?>]"><?php _e( "Path to parse from RSS", 'formidable-rss-parser' ); ?></label>
-<!--		TODO: style.css seems to be missed -->
-		<ul class="rss-parser-option-tips">
+		<ul style="margin-left: 10px;">
 			<li>
-				<?php _e( "Use \"show_relation\" to refer the owner", 'formidable-rss-parser' ); ?>
+				<?php _e( "Use \"show_relation\" key to refer the owner", 'formidable-rss-parser' ); ?>
 			</li>
 			<li>
-				<?php _e( "Use \".\" in child options, ie: item.title", 'formidable-rss-parser' ); ?>
-			</li>
-			<li>
-				prefix:tag ??????
+				<?php _e( "Use \".\" to specify the hierarchy in the option name, ie: item.title", 'formidable-rss-parser' ); ?>
 			</li>
 		</ul>
 	</td>
