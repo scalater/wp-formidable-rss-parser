@@ -25,13 +25,18 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 			$form_fields = FrmField::get_all_for_form( $this->$target );
 			$mapping     = array();
 			foreach ( $form_fields as $field ) {
-				$option = FrmField::get_option( $field, 'rss_parser_match' );
-				if ( ! empty( $option ) ) {
-					if ( $option !== 'show_relation' ) {
-						$mapping[ $field->id ] = $this->option_to_array( $option );
+				$rss_parser_match_option = FrmField::get_option( $field, 'rss_parser_match' );
+				if ( ! empty( $rss_parser_match_option ) ) {
+					if ( $rss_parser_match_option !== 'show_relation' ) {
+						$mapping[ $field->id ]['map'] = $this->option_to_array( $rss_parser_match_option );
 					} else {
-						$mapping[ $field->id ] = 'show_relation';
+						$mapping[ $field->id ]['map'] = 'show_relation';
 					}
+				}
+
+				$rss_parser_rss_key_option = FrmField::get_option( $field, 'rss_parser_rss_key' );
+				if ( ! empty( $rss_parser_rss_key_option ) ) {
+					$mapping[ $field->id ]['rss_key'] = $this->option_to_array( $rss_parser_rss_key_option );
 				}
 			}
 
@@ -46,17 +51,18 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 			}
 		}
 
-		public function get_episode_metas( $mapping, $selections ) {
-			if ( ! isset( $this->channel ) ) {
-				throw new Exception( 'Missing form channel data' );
-			}
-			$result = array();
-			foreach ( $selections as $selection ) {
-				$result[] = $this->get_mapped_metas( $mapping, $selection );
-			}
-
-			return $result;
-		}
+		//Not used function
+//		public function get_episode_metas( $mapping, $selections ) {
+//			if ( ! isset( $this->channel ) ) {
+//				throw new Exception( 'Missing form channel data' );
+//			}
+//			$result = array();
+//			foreach ( $selections as $selection ) {
+//				$result[] = $this->get_mapped_metas( $mapping, $selection );
+//			}
+//
+//			return $result;
+//		}
 
 		public function get_mapped_metas( $map_options, $xml = false, $show_id = false ) {
 			if ( ! isset( $this->channel ) ) {
@@ -68,7 +74,10 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 			} else {
 				$map_children = $xml->children;
 			}
-			foreach ( $map_options as $field_id => $options ) {
+			foreach ( $map_options as $field_id => $map_option ) {
+
+				$options = $map_option['map'];
+
 				if ( is_array( $options ) ) {
 					foreach ( $options as $option_position => $option ) {
 						$option_founded = false;
@@ -79,7 +88,7 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 									if ( ! empty( $child->attributes ) ) {
 										foreach ( $child->attributes as $attribute_tag => $attribute_val ) {
 											if ( $attribute_tag === $option ) {
-												$result[ $field_id ] = $attribute_val;
+												$result[ $field_id ]['map'] = $attribute_val;
 												$option_founded      = true;
 												break 3;
 											}
@@ -90,13 +99,13 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 												if ( ! empty( $sub_child->attributes ) ) {
 													foreach ( $sub_child->attributes as $attribute_tag => $attribute_val ) {
 														if ( $attribute_tag === $option ) {
-															$result[ $field_id ] = $attribute_val;
+															$result[ $field_id ]['map'] = $attribute_val;
 															$option_founded      = true;
 															break 3;
 														}
 													}
 												}
-												$result[ $field_id ] = $sub_child->text;
+												$result[ $field_id ]['map'] = $sub_child->text;
 												$option_founded      = true;
 												break 3;
 											}
@@ -109,37 +118,106 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 				} else {
 					foreach ( $map_children as $child ) {
 						if ( 'show_relation' == $options && ! empty( $show_id ) ) {
-							$result[ $field_id ] = $show_id;
+							$result[ $field_id ]['map'] = $show_id;
 						} else {
 							if ( $child->name === $options ) {
 								if ( ! empty( $child->attributes ) ) {
 									foreach ( $child->attributes as $attribute_tag => $attribute_val ) {
 										if ( $attribute_tag === $options ) {
-											$result[ $field_id ] = $attribute_val;
+											$result[ $field_id ]['map'] = $attribute_val;
 											break;
 										}
 									}
 								}
-								$result[ $field_id ] = $child->text;
+								$result[ $field_id ]['map'] = $child->text;
 								break;
 							}
 						}
 					}
 				}
+
+				$result[$field_id]['rss_key'] = isset($map_option['rss_key']) && $map_option['rss_key'] == "on";
 			}
 
 			return $result;
 		}
 
 		public function insert_into_form( $form_id, $metas ) {
+
+			$item_meta = [];
+			$unique_key_item_meta = [];
+
+			foreach ($metas as $key => $data){
+				$item_meta[$key] = $data['map'];
+
+				if($data['rss_key']){
+					$unique_key_item_meta[$key] = $data['map'];
+				}
+			}
+
 			$data = array(
 				'form_id'                      => $form_id,//update the form id
 				'frm_user_id'                  => get_current_user_id(),
 				'frm_submit_entry_' . $form_id => wp_create_nonce( 'frm_submit_entry_nonce' ),//update the form id
-				'item_meta'                    => $metas,
+				'item_meta'                    => $item_meta,
 			);
 
-			return FrmEntry::create( $data );
+			//TODO: include user_id in filter
+			$found = [];
+
+			foreach ($unique_key_item_meta as $field_id => $meta_value){
+				$entries_meta = FrmEntryMeta::getAll([
+					'form_id' 		=> $form_id,
+					'field_id' 		=> $field_id,
+					'meta_value'	=> $meta_value,
+				]);
+
+				foreach ($entries_meta as $entry_meta){
+					$found[$field_id][] = $entry_meta->item_id;
+				}
+			}
+
+			$entry_id = 0;
+
+			if(!empty($found)){
+				if(count($found) == 1){
+					$entry_id = reset($found)[0];
+				}else{
+					$intersection = [];
+					$first_loop = true;
+					foreach ($found as $candidates){
+						if($first_loop){
+							$intersection = $candidates;
+							$first_loop = true;
+						}else{
+							$intersection = array_intersect($intersection, $candidates);
+						}
+					}
+
+					if(!empty($intersection)){
+						$entry_id = reset($intersection);
+					}
+				}
+			}
+
+			if($entry_id == 0){
+				$entry_id = FrmEntry::create( $data );
+
+				foreach ($item_meta as $field_id => $field_value){
+					FrmEntryMeta::add_entry_meta( $entry_id, $field_id, $field_id, $field_value );
+				}
+			}else{
+				FrmEntry::update($entry_id, $data);
+
+				foreach ($item_meta as $field_id => $field_value){
+					FrmEntryMeta::update_entry_meta( $entry_id, $field_id, $field_id, $field_value );
+				}
+			}
+
+
+
+			return $entry_id;
+
 		}
 
 	}
