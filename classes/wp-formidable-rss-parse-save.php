@@ -144,6 +144,8 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 
 		public function insert_into_form( $form_id, $metas ) {
 
+			$entry_id = 0;
+
 			$item_meta = [];
 			$unique_key_item_meta = [];
 
@@ -155,47 +157,59 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 				}
 			}
 
+			$user_id = get_current_user_id();
+
 			$data = array(
-				'form_id'                      => $form_id,//update the form id
-				'frm_user_id'                  => get_current_user_id(),
-				'frm_submit_entry_' . $form_id => wp_create_nonce( 'frm_submit_entry_nonce' ),//update the form id
-				'item_meta'                    => $item_meta,
+				'form_id'                      	=> $form_id,//update the form id
+				'frm_user_id'                  	=> $user_id,
+				'frm_submit_entry_' . $form_id 	=> wp_create_nonce( 'frm_submit_entry_nonce' ),//update the form id
+				'item_meta'                    	=> $item_meta,
 			);
 
-			//TODO: include user_id in filter
 			$found = [];
+			$user_entry_ids = [];
 
-			foreach ($unique_key_item_meta as $field_id => $meta_value){
-				$entries_meta = FrmEntryMeta::getAll([
-					'form_id' 		=> $form_id,
-					'field_id' 		=> $field_id,
-					'meta_value'	=> $meta_value,
-				]);
+			$user_entries = FrmEntry::getAll([
+				'form_id'	=> $form_id,
+				'user_id'	=> $user_id,
+			]);
 
-				foreach ($entries_meta as $entry_meta){
-					$found[$field_id][] = $entry_meta->item_id;
-				}
+			foreach ($user_entries as $user_entry){
+				$user_entry_ids[] = $user_entry->id;
 			}
 
-			$entry_id = 0;
+			if(!empty($user_entry_ids)) {
 
-			if(!empty($found)){
-				if(count($found) == 1){
-					$entry_id = reset($found)[0];
-				}else{
-					$intersection = [];
-					$first_loop = true;
-					foreach ($found as $candidates){
-						if($first_loop){
-							$intersection = $candidates;
-							$first_loop = true;
-						}else{
-							$intersection = array_intersect($intersection, $candidates);
+				foreach ($unique_key_item_meta as $field_id => $meta_value) {
+
+					$entries_meta_ids = FrmEntryMeta::search_entry_metas($meta_value, $field_id, 'LIKE');
+
+					foreach ($entries_meta_ids as $entry_meta_id) {
+						if (in_array($entry_meta_id, $user_entry_ids) &&
+							!in_array($entry_meta_id, $found[$field_id])) {
+							$found[$field_id][] = $entry_meta_id;
 						}
 					}
+				}
 
-					if(!empty($intersection)){
-						$entry_id = reset($intersection);
+				if (!empty($found)) {
+					if (count($found) == 1) {
+						$entry_id = reset($found)[0];
+					} else {
+						$intersection = [];
+						$first_loop = true;
+						foreach ($found as $candidates) {
+							if ($first_loop) {
+								$intersection = $candidates;
+								$first_loop = true;
+							} else {
+								$intersection = array_intersect($intersection, $candidates);
+							}
+						}
+
+						if (!empty($intersection)) {
+							$entry_id = reset($intersection);
+						}
 					}
 				}
 			}
@@ -207,14 +221,10 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 					FrmEntryMeta::add_entry_meta( $entry_id, $field_id, $field_id, $field_value );
 				}
 			}else{
-				FrmEntry::update($entry_id, $data);
-
 				foreach ($item_meta as $field_id => $field_value){
 					FrmEntryMeta::update_entry_meta( $entry_id, $field_id, $field_id, $field_value );
 				}
 			}
-
-
 
 			return $entry_id;
 
