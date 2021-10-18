@@ -182,7 +182,7 @@ if ( ! class_exists( 'FormidableRSSSave' ) ) {
 
 				foreach ($unique_key_item_meta as $field_id => $meta_value) {
 
-					$entries_meta_ids = FrmEntryMeta::search_entry_metas($meta_value, $field_id, 'LIKE');
+					$entries_meta_ids = FrmEntryMeta::search_entry_metas($meta_value, $field_id, '=');
 
 					foreach ($entries_meta_ids as $entry_meta_id) {
 						if (in_array($entry_meta_id, $user_entry_ids) &&
