@@ -289,6 +289,10 @@ var formidableRSSParserInstance = {
 			} else {
 				formidableRSSParserInstance.onValid(container);
 				formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
+
+				container.find('.formidable-rss-result-show').hide();
+				container.find('.formidable-rss-result-episodes-container').hide();
+
 				formidableRSSParserInstance.rssAjax(rssUrl, container, targetElement,
 					function (data) {
 						if (data.count && data.count > 0 && data.rss) {
@@ -354,11 +358,6 @@ var formidableRSSParserInstance = {
 									throw new Error('No data detected or episodes items');
 								}
 							}
-
-
-
-
-
 						}
 					},
 					function () {

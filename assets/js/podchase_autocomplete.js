@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
 		if(lastTypeDate != null){
 			let currentDate = new Date();
 
-			if(currentDate - lastTypeDate >= 2000){
+			if(currentDate - lastTypeDate >= 1000){
 
 				let search = jQuery(".formidable-rss-parser").val();
 
@@ -85,19 +85,12 @@ jQuery(document).ready(function() {
 				}
 			}
 		}
-	}, 1000);
+	}, 500);
 
 	jQuery('.formidable-rss-parser').on('keyup', function (e){
 		if(e.keyCode != 13){
 			lastTypeDate = new Date();
 		}
-	});
-
-	//TODO: remove if don't needed
-	jQuery('.search-show').on('click', function(e){
-		// requestInProgress = true;
-
-		// e.preventDefault();
 	});
 
 	function proccessPodchaseResponse(response){
@@ -119,7 +112,7 @@ jQuery(document).ready(function() {
 	}
 
 	function getShowContainer(podcast){
-		return '<label class="element-list search-result-show-item" onclick="searchRSS(\''+podcast.rssUrl+'\');">' +
+		return '<label class="element-list search-result-show-item" onclick="replaceRSSUrl(\''+podcast.rssUrl+'\');">' +
 			'<div class="element-image">' +
 			'<img src="' + podcast.imageUrl + '" alt="' + podcast.title + '">' +
 			'</div>' +
@@ -136,10 +129,6 @@ jQuery(document).ready(function() {
 
 });
 
-function searchRSS(rssUrl){
+function replaceRSSUrl(rssUrl){
 	jQuery(".formidable-rss-parser").val(rssUrl);
-	// jQuery('.formidable-rss-result-show').html('');
-	// jQuery('.search-show').click();
-
-	formidableRSSParserInstance.setShowData();
 }
