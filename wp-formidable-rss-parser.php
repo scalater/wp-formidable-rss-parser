@@ -125,10 +125,15 @@ class FormidableRSSParser {
 		return self::$instance;
 	}
 
-	public static function assets_path( $name, $extension = 'js' ): string {
+	public static function assets_path( $name, $extension = 'js', $compute_suffix = true): string {
 		$url    = plugin_dir_url( __FILE__ ) . 'assets/';
 		$url    .= ( $extension == 'js' ) ? 'js/' : 'css/';
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		$suffix = '';
+
+		if($compute_suffix) {
+			$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+		}
 
 		return $url . $name . $suffix . '.' . $extension;
 	}

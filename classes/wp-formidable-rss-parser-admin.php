@@ -197,7 +197,10 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 
 		public static function include_assets() {
 			wp_enqueue_script( 'formidableRSSParserLodash', FormidableRSSParser::assets_path( 'lodash' ), array( 'jquery' ), FormidableRSSParser::get_version(), true );
-			wp_enqueue_script( 'formidableRSSParser', FormidableRSSParser::assets_path( 'script' ), array( 'jquery', 'formidableRSSParserLodash' ), FormidableRSSParser::get_version(), true );
+			//TODO: rollback compute_suffix
+			//TODO: define SCRIPT_DEBUG in local environment
+			wp_enqueue_script( 'formidableRSSParser', FormidableRSSParser::assets_path( 'script', 'js', false ), array( 'jquery', 'formidableRSSParserLodash' ), FormidableRSSParser::get_version(), true );
+			wp_enqueue_script( 'formidableRSSAutoComplete', FormidableRSSParser::assets_path( 'podchase_autocomplete', 'js', false), [], false, true);
 			wp_enqueue_style( 'formidableRSSParser', FormidableRSSParser::assets_path( 'style', 'css' ), array(), FormidableRSSParser::get_version() );
 			$args = array(
 					'admin_url' => admin_url( 'admin-ajax.php' ),
