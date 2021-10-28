@@ -1,10 +1,29 @@
 jQuery(document).ready(function() {
 
+	var podchaseToken = '';
 	var lastTypeDate = null;
 	var requestInProgress = false;
 
+	jQuery.ajax({
+		type: 'POST',
+		dataType: 'json',
+		url: formidableRSSParserObj.admin_url,
+		data: {
+			'action': 'get_podchase_token',
+			'nonce': formidableRSSParserObj.nonce
+		},
+		success: function(response) {
+			if(response.success){
+				podchaseToken = response.data;
+			}
+		},
+		error: function(request, status, error) {
+			alert(error);
+		},
+	});
+
 	setInterval(function() {
-		if(lastTypeDate != null){
+		if(lastTypeDate != null && podchaseToken != ''){
 			let currentDate = new Date();
 
 			if(currentDate - lastTypeDate >= 1000){
@@ -26,7 +45,7 @@ jQuery(document).ready(function() {
 							url: "https://api.podchaser.com/graphql",
 							contentType: "application/json",
 							headers: {
-								Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGFlNjc3Yy1kYWNjLTQ5ZTctYjdjZC1kZWFhZWZlZjdmMTMiLCJqdGkiOiI3YTBkZGQxZjE3Nzc2MjQ4OWQ2NjQzNzdkNzYwOGMzOTgyZGY1YmFkOTU2N2ZiNWE1ZTllOGY0Y2YzYTA3NTU5ZTg5YWE1YjA5NTNiOTIyOCIsImlhdCI6MTYzNDkyMjU2Mi40MjI5MiwibmJmIjoxNjM0OTIyNTYyLjQyMjkyNSwiZXhwIjoxNjY2NDU4NTYyLjQwNTA3LCJzdWIiOiIiLCJzY29wZXMiOlsiKiJdfQ.SvCbEh4cJ2VP2ktbAPqMWuKaPdY0-aSh22oyugRPvQtjUxoEvgdhINv8WlhJIWZVApQ3ujsE3_ZS6emQGxLeeJ2srNWHDR3aNdIaO1KKXKoNC5hX8jKKSrqcYWheEqfKG4hwUbyVsl9k1k1_Pv7sxjmPeISG8bFQtrXPwsbnmIZ6p0EgEgdAQZOokAEvgvGEw68qNWotwHhbH4dCfdutY3E-AY_Y7DwAhK90sVRh6GZkFhSio-SEUUCtdnqj5jMXVENty4MkdqBQelP8DA65oolHVWpP8wzoRPXufVG5J4S4aTS-NfFl__Y_bEJd-8mMZpYRthi0ZG4KIcrSX_ccD26Wa8IyqwKwNQVnhHiTG0GR2jhtearpGd-S_pCdTc_Nv__zJKe4RTsOrNG_SRtrye0R8qNyKBjQRN86DDDO5EOQ6BwoaOBnAttMu3mVRdKa5d88Ol5oSCm8XX7iUi_zZFJFCWqFMV_wWzNNYffoNpmnOliNrH3h7sbu69XEF4aanU4Eq6FfxubIlscQxJ4J3I0AGACi1EAH4gKKQGolrk1yfFe6ba-KqL21vGCqfM2SdvuULOtJNjmjSUV16CmwkQB65QEbNZ6znjtAhsN5er5LPywGGsJbnxVfaomLKiXynSoWrTItGCQSau2NQD4Jx1Y9JfICvpRQeFBXuNbFj1M"
+								Authorization: podchaseToken
 							},
 							data: JSON.stringify({
 								query: `query{
