@@ -15,6 +15,62 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 			add_action( "wp_ajax_formidable_rss_parse", array( $this, "formidable_rss_parser_callback" ) );
 			add_action( "wp_ajax_nopriv_formidable_rss_parser_import", array( $this, "formidable_rss_parser_import_callback" ) );
 			add_action( "wp_ajax_formidable_rss_parser_import", array( $this, "formidable_rss_parser_import_callback" ) );
+			add_action( 'wp_ajax_get_podchase_token', array($this, 'formidable_rss_parser_podchase_token_callback'));
+		}
+
+		public function formidable_rss_parser_podchase_token_callback() {
+			$podchase_endpoint = get_option( 'wp_formidable_rss_parser_podchase_endpoint' );
+			$podchase_token = get_option( 'wp_formidable_rss_parser_podchase_token' );
+			$podchase_token_expires_in = get_option( 'wp_formidable_rss_parser_podchase_token_expires_in' );
+
+			if($podchase_endpoint) {
+				//TODO: fix uses of $podchase_token_expires_in
+				if (!$podchase_token /* || $podchase_token_expires_in <= time()*/) {
+					$podchase_client_key = get_option('wp_formidable_rss_parser_podchase_client_key');
+					$podchase_secret_key = get_option('wp_formidable_rss_parser_podchase_secret_key');
+
+					$query = "mutation {
+						requestAccessToken(
+							input: {
+								grant_type: CLIENT_CREDENTIALS
+								client_id: \"".$podchase_client_key."\"
+								client_secret: \"".$podchase_secret_key."\"
+							}
+						) {
+							access_token
+							token_type
+							expires_in
+						}
+					}";
+
+					$data = array ('query' => $query);
+					$data = http_build_query($data);
+
+					$options = array(
+							'http' => array(
+									'method'  => 'POST',
+									'content' => $data
+							)
+					);
+
+					$context  = stream_context_create($options);
+					$result = file_get_contents($podchase_endpoint, false, $context);
+
+					if ($result === FALSE) {
+						print('');
+					}else{
+						$json = json_decode($result);
+						$podchase_token = $json->data->requestAccessToken->access_token;
+						$podchase_token_expires_in = $json->data->requestAccessToken->expires_in;
+
+						update_option('wp_formidable_rss_parser_podchase_token', $podchase_token);
+						update_option('wp_formidable_rss_parser_podchase_token_expires_in', $podchase_token_expires_in);
+					}
+				}
+			}
+
+			wp_send_json_success($podchase_token);
+			die();
 		}
 
 		public function formidable_rss_parser_import_callback() {
@@ -162,10 +218,16 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 			add_settings_field( 'wp_formidable_rss_parser_user_id', __( 'User Id', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_user_id_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
 			add_settings_field( 'wp_formidable_rss_parser_api_key', __( 'API key', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_api_key_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
 			add_settings_field( 'wp_formidable_rss_parser_header', __( 'Header', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_header_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
+			add_settings_field( 'wp_formidable_rss_parser_podchase_endpoint', __( 'Podchase Endpoint', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_podchase_endpoint_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
+			add_settings_field( 'wp_formidable_rss_parser_podchase_client_key', __( 'Podchase Client Key', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_podchase_client_key_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
+			add_settings_field( 'wp_formidable_rss_parser_podchase_secret_key', __( 'Podchase Secret Key', 'formidable-rss-parser' ), array( $this, 'wp_formidable_rss_parser_podchase_secret_key_cb' ), 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_section' );
 
 			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_user_id' );
 			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_api_key' );
 			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_header' );
+			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_podchase_endpoint' );
+			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_podchase_client_key' );
+			register_setting( 'wp_formidable_rss_parser_option', 'wp_formidable_rss_parser_podchase_secret_key' );
 		}
 
 		public function wp_formidable_rss_parser_user_id_cb() {
@@ -191,6 +253,33 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 			?>
 			<p>
 				<textarea style="width: 550px;" rows="20" name="wp_formidable_rss_parser_header"><?php echo esc_textarea( $value ) ?></textarea>
+			</p>
+			<?php
+		}
+
+		public function wp_formidable_rss_parser_podchase_endpoint_cb() {
+			$value = get_option( 'wp_formidable_rss_parser_podchase_endpoint' );
+			?>
+			<p>
+				<input type="text" name="wp_formidable_rss_parser_podchase_endpoint" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
+			</p>
+			<?php
+		}
+
+		public function wp_formidable_rss_parser_podchase_client_key_cb() {
+			$value = get_option( 'wp_formidable_rss_parser_podchase_client_key' );
+			?>
+			<p>
+				<input type="text" name="wp_formidable_rss_parser_podchase_client_key" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
+			</p>
+			<?php
+		}
+
+		public function wp_formidable_rss_parser_podchase_secret_key_cb() {
+			$value = get_option( 'wp_formidable_rss_parser_podchase_secret_key' );
+			?>
+			<p>
+				<input type="text" name="wp_formidable_rss_parser_podchase_secret_key" value="<?php echo isset( $value ) ? esc_attr( $value ) : ''; ?>" style="width: 350px;">
 			</p>
 			<?php
 		}
