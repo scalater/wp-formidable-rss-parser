@@ -1,6 +1,7 @@
 jQuery(document).ready(function() {
 
 	var podchaseToken = '';
+	var podchaseEndpoint = '';
 	var lastTypeDate = null;
 	var requestInProgress = false;
 
@@ -14,7 +15,8 @@ jQuery(document).ready(function() {
 		},
 		success: function(response) {
 			if(response.success){
-				podchaseToken = response.data;
+				podchaseToken = response.data.token;
+				podchaseEndpoint = response.data.endpoint;
 			}
 		},
 		error: function(request, status, error) {
@@ -42,7 +44,7 @@ jQuery(document).ready(function() {
 
 						jQuery.ajax({
 							method: "POST",
-							url: "https://api.podchaser.com/graphql",
+							url: podchaseEndpoint,
 							contentType: "application/json",
 							headers: {
 								Authorization: podchaseToken
