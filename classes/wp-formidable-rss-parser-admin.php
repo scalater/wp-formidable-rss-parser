@@ -68,7 +68,7 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 				}
 			}
 
-			wp_send_json_success($podchase_token);
+			wp_send_json_success(['endpoint' => $podchase_endpoint, 'token' => $podchase_token]);
 			die();
 		}
 
@@ -78,7 +78,7 @@ if ( ! class_exists( 'FormidableRSSParserAdmin' ) ) {
 					die();
 				}
 				if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) || empty( $_POST['target_form_id_episode'] )
-					 || empty( $_POST['selection'] ) || empty( $_POST['url'] ) || empty( $_POST['target_form_id_show'] )
+						|| empty( $_POST['selection'] ) || empty( $_POST['url'] ) || empty( $_POST['target_form_id_show'] )
 				) {
 					die();
 				}
