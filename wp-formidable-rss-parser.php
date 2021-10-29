@@ -125,17 +125,16 @@ class FormidableRSSParser {
 		return self::$instance;
 	}
 
-	public static function assets_path( $name, $extension = 'js', $avoidMinExt = false): string {
+	public static function assets_path( $name, $extension = 'js'): string {
 		$url    = plugin_dir_url( __FILE__ ) . 'assets/';
 		$url    .= ( $extension == 'js' ) ? 'js/' : 'css/';
 
-		$suffix = '';
+//		$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-		if(!$avoidMinExt) {
-			$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
-		}
+//		return $url . $name . $suffix . '.' . $extension;
 
-		return $url . $name . $suffix . '.' . $extension;
+		//FIX. Avoiding uses of .min due problems in staging.
+		return $url . $name . '.' . $extension;
 	}
 
 	/**
