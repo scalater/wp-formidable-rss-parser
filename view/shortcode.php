@@ -1,7 +1,8 @@
 <div class="formidable-rss-parser-container-shortcode">
 	<label class="input-url">
 		<?php if ( ! empty( $label ) ): ?><p class="title"><?php echo esc_attr( $label ); ?></p><?php endif; ?>
-		<div class="search-container">
+		<div class="rss-parser-go-back" style="display: none"><a href="#"><?php _e('Go Back', 'formidable-rss-parser') ?></a></div>
+		<div class="search-container rss-parser-search-container">
 			<div class="input-outer">
 				<input type="url" class="formidable-rss-parser" <?php echo esc_attr( $redirect ) ?> <?php echo esc_attr( $form_id_show ) ?> <?php echo esc_attr( $type ) ?> <?php echo esc_attr( $form_id_episode ) ?> id="field_<?php echo esc_attr( $html_id ) ?>" value="">
 				<div class="clear-input">
