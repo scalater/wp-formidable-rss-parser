@@ -257,6 +257,9 @@ var formidableRSSParserInstance = {
 		}
 		jQuery(element).val('');
 		formidableRSSParserInstance.onValid(container);
+		container.find('.formidable-rss-parser').val('');
+		container.find('.rss-parser-search-container').show();
+		container.find('.rss-parser-go-back').hide();
 		container.find('.formidable-rss-result-show').hide();
 		container.find('.formidable-rss-result-episodes-container').hide();
 	},
@@ -317,10 +320,16 @@ var formidableRSSParserInstance = {
 										'</label>';
 									resultContainer.html('').html(showHtml);
 								}
+
+								container.find('.formidable-rss-result-show').show();
 							}else{
 								if (data && data.rss && data.rss.item) {
 									// formidableRSSParserInstance.shortCodeLoadingAdd(searchButton);
 									window.setTimeout(function () {
+										container.find('.rss-parser-go-back').show();
+										container.find('.rss-parser-search-container').hide();
+										container.find('.formidable-rss-result-show').hide();
+
 										let imageContainer = container.find('.formidable-rss-result-episodes-container .episode-image img');
 										let listContainer = container.find('.formidable-rss-result-episodes-container .episodes-list');
 										imageContainer.attr('src', data.rss.image.url);
@@ -350,8 +359,7 @@ var formidableRSSParserInstance = {
 											`;
 											listContainer.append(listHtml);
 										});
-										// formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
-										container.find('.formidable-rss-result-show').hide();
+
 										container.find('.formidable-rss-result-episodes-container').show();
 									}, 250);
 								} else {
@@ -362,7 +370,7 @@ var formidableRSSParserInstance = {
 					},
 					function () {
 						formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
-						container.find('.formidable-rss-result-show').show();
+
 						// container.find('.formidable-rss-result-episodes-container').hide();
 					},
 				);
@@ -409,6 +417,10 @@ var formidableRSSParserInstance = {
 					listContainer.append(listHtml);
 				});
 				formidableRSSParserInstance.shortCodeLoadingRemove(searchButton);
+
+				container.find('.rss-parser-go-back').show();
+				container.find('.rss-parser-search-container').hide();
+
 				container.find('.formidable-rss-result-show').hide();
 				container.find('.formidable-rss-result-episodes-container').show();
 			}, 250);
@@ -485,6 +497,10 @@ var formidableRSSParserInstance = {
 					});
 					jQuery(document).on('click', '.formidable-rss-parser-container-shortcode .clear-input', function (e) {
 						formidableRSSParserInstance.clearShortCodeInput(targetElement, container);
+					});
+					jQuery(document).on('click', '.rss-parser-go-back', function(e){
+						e.preventDefault();
+						formidableRSSParserInstance.clearShortCodeInput(e, container);
 					});
 				}
 				jQuery('.formidable-rss-result-episodes-container .episodes-list, .formidable-rss-result-episodes-container .formidable-rss-result-episodes').on('scroll', function (e) {
