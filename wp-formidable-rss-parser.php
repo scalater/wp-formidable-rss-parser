@@ -34,6 +34,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+register_activation_hook( __FILE__, 'wp_formidable_rss_parse_activation' );
+register_uninstall_hook(__FILE__, 'wp_formidable_rss_parse_uninstall');
+
+function wp_formidable_rss_parse_activation(){
+	if(!get_option('wp_formidable_rss_parser_podchase_endpoint')) {
+		add_option('wp_formidable_rss_parser_podchase_endpoint', 'https://api.podchaser.com/graphql');
+	}
+}
+
+function wp_formidable_rss_parse_uninstall(){
+	delete_option('wp_formidable_rss_parser_podchase_endpoint');
+	delete_option('wp_formidable_rss_parser_podchase_token');
+	delete_option('wp_formidable_rss_parser_podchase_token_expires_in');
+	delete_option('wp_formidable_rss_parser_podchase_client_key');
+	delete_option('wp_formidable_rss_parser_podchase_secret_key');
+}
+
 class FormidableRSSParser {
 	public static $version = '1.0.0';
 	public static $slug = 'formidable-rss-parser';
