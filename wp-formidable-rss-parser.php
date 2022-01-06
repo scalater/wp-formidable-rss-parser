@@ -146,12 +146,9 @@ class FormidableRSSParser {
 		$url    = plugin_dir_url( __FILE__ ) . 'assets/';
 		$url    .= ( $extension == 'js' ) ? 'js/' : 'css/';
 
-//		$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
-//		return $url . $name . $suffix . '.' . $extension;
-
-		//FIX. Avoiding uses of .min due problems in staging.
-		return $url . $name . '.' . $extension;
+		return $url . $name . $suffix . '.' . $extension;
 	}
 
 	/**
