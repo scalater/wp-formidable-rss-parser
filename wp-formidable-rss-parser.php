@@ -64,6 +64,7 @@ class FormidableRSSParser {
 		include_once 'classes/wp-formidable-rss-feed.php';
 		include_once 'classes/wp-formidable-rss-parse-save.php';
 		include_once 'classes/wp-formidable-rss-parser-admin.php';
+		include_once 'classes/wp-formidable-fixes.php';
 		new FormidableRSSParserAdmin();
 //		include_once 'classes/wp-formidable-rss-parser-field-base.php';
 //		include_once 'classes/wp-formidable-rss-parser-field.php';
@@ -72,6 +73,7 @@ class FormidableRSSParser {
 		new FormidableRSSParserFieldOptions();
 		include 'classes/wp-formidable-rss-shortcode.php';
 		new FormidableRSSShortCode();
+		FormidableFixes::apply();
 	}
 
 	/**
